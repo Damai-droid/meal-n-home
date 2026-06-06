@@ -1,0 +1,654 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Checkout — Meal N Home{% endblock %}
+
+{% block extra_css %}
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins', sans-serif;
+}
+
+.checkout-wrapper{
+    width:90%;
+    max-width:1150px;
+    margin:40px auto;
+}
+
+.checkout-title{
+    margin-bottom:30px;
+}
+
+.checkout-title h1{
+    font-size:48px;
+    font-family:Georgia, serif;
+}
+
+.checkout-title p{
+    color:#777;
+    margin-top:8px;
+}
+
+.checkout-container{
+    display:flex;
+    gap:25px;
+    align-items:flex-start;
+}
+
+.checkout-left{
+    flex:1.3;
+    background:white;
+    padding:30px;
+    border-radius:25px;
+    box-shadow:0 4px 15px rgba(0,0,0,0.05);
+}
+
+.checkout-right{
+    width:330px;
+    position:sticky;
+    top:120px;
+}
+
+.card{
+    background:white;
+    padding:25px;
+    border-radius:25px;
+    box-shadow:0 4px 15px rgba(0,0,0,0.05);
+}
+
+.section-title{
+    font-size:24px;
+    font-weight:700;
+    margin-bottom:20px;
+}
+
+.form-group{
+    margin-bottom:18px;
+}
+
+label{
+    display:block;
+    margin-bottom:8px;
+    font-weight:600;
+}
+
+input,
+textarea{
+    width:100%;
+    padding:14px;
+    border-radius:14px;
+    border:1px solid #ddd;
+    background:#faf7f4;
+}
+
+textarea{
+    resize:none;
+    height:100px;
+}
+
+.product-item{
+    display:flex;
+    gap:15px;
+    margin-bottom:20px;
+}
+
+.product-item img{
+    width:70px;
+    height:70px;
+    object-fit:cover;
+    border-radius:14px;
+}
+
+.product-name{
+    font-weight:700;
+}
+
+.product-portion{
+    color:#777;
+    font-size:14px;
+}
+
+.qty-box{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-top:10px;
+}
+
+.qty-btn{
+    width:30px;
+    height:30px;
+    border:none;
+    border-radius:50%;
+    background:#e2633a;
+    color:white;
+    cursor:pointer;
+}
+
+.addon-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #faf7f4;
+    padding: 16px;
+    border-radius: 16px;
+    margin-bottom: 12px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.addon-box:hover {
+    background: #fdfaf6;
+    border-color: rgba(212, 85, 42, 0.15);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(212, 85, 42, 0.04);
+}
+
+.addon-box.selected {
+    background: #fff8f5;
+    border-color: #e2633a;
+    box-shadow: 0 8px 24px rgba(212, 85, 42, 0.08);
+}
+
+.addon-left{
+    display:flex;
+    gap:10px;
+    align-items:center;
+}
+
+.payment-option{
+    border:1px solid #ddd;
+    padding:14px;
+    border-radius:14px;
+    margin-bottom:10px;
+}
+
+.summary-row{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:15px;
+}
+
+.total{
+    color:#e2633a;
+    font-size:28px;
+    font-weight:700;
+}
+
+.checkout-btn{
+    width:100%;
+    padding:16px;
+    border:none;
+    border-radius:50px;
+    background:#e2633a;
+    color:white;
+    font-size:17px;
+    font-weight:700;
+    margin-top:25px;
+    cursor:pointer;
+}
+
+.small-note{
+    margin-top:10px;
+    color:#888;
+    font-size:13px;
+}
+
+@media(max-width:900px){
+
+    .checkout-container{
+        flex-direction:column;
+    }
+
+    .checkout-right{
+        width:100%;
+        position:relative;
+        top:0;
+    }
+}
+
+
+
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="checkout-wrapper">
+
+    <div class="checkout-title">
+        <h1>Checkout 🛒</h1>
+        <p>Lengkapi data pesananmu</p>
+    </div    <form method="POST">
+        {% csrf_token %}
+
+        {% if subscription %}
+        <input type="hidden" name="subscription_schedule" value="{{ request.GET.schedule|default:'' }}">
+        <input type="hidden" name="subscription_diet" value="{{ request.GET.diet|default:'' }}">
+        {% endif %}
+
+        <div class="checkout-container">
+
+            <!-- LEFT: Ringkasan Pesanan (Lebar & Utama) -->
+            <div class="checkout-left">
+
+                <div class="section-title">
+                    📋 Ringkasan Pesanan
+                </div>
+
+                {% if product or bundle or subscription %}
+                <div class="product-item">
+
+                    {% if product and product.image %}
+                    <img src="{{ product.image.url }}">
+                    {% elif bundle %}
+                    <div style="width:70px; height:70px; border-radius:14px; background:var(--cream-dark); display:flex; align-items:center; justify-content:center; font-size:2.2rem;">📦</div>
+                    {% elif subscription %}
+                    <div style="width:70px; height:70px; border-radius:14px; background:var(--cream-dark); display:flex; align-items:center; justify-content:center; font-size:2.2rem;">📅</div>
+                    {% else %}
+                    <div style="width:70px; height:70px; border-radius:14px; background:var(--cream-dark); display:flex; align-items:center; justify-content:center; font-size:2.2rem;">🍽️</div>
+                    {% endif %}
+
+                    <div class="product-info">
+
+                        <div class="product-name">
+                            {% if product %}{{ product.name }}{% elif bundle %}{{ bundle.name }}{% elif subscription %}{{ subscription.name }}{% endif %}
+                        </div>
+
+                        <div class="product-portion">
+                            {% if product %}{{ product.get_portion_display }}{% elif bundle %}Paket Hemat{% elif subscription %}{{ subscription.get_duration_display }} · {{ subscription.deliveries_per_week }}x/minggu{% endif %}
+                        </div>
+
+                        <!-- QUANTITY -->
+                        {% if not subscription %}
+                        <div class="qty-box">
+
+                            <button type="button" class="qty-btn" onclick="decreaseQty()">
+                                -
+                            </button>
+
+                            <span id="qty-display">{{ form.quantity.value|default:1 }}</span>
+
+                            <button type="button" class="qty-btn" onclick="increaseQty()">
+                                +
+                            </button>
+
+                        </div>
+                        {% endif %}
+
+                        <input type="hidden" name="quantity" id="quantity-input" value="{{ form.quantity.value|default:1 }}">
+
+                    </div>
+
+                </div>
+                {% endif %}
+
+                <hr style="margin:20px 0;">
+
+                <!-- ADD MENU / ADD-ON -->
+                <div class="section-title" style="font-size:20px;">
+                     Tambah Menu
+                </div>
+
+                {% for addon in addons %}
+                <div class="addon-box {% if addon.id in preselected_addons %}selected{% endif %}" onclick="toggleAddonCard(this)">
+
+                    <div class="addon-left">
+
+                        <div style="font-size:22px;">
+                            {{ addon.icon }}
+                        </div>
+
+                        <div>
+                            <strong>{{ addon.name }}</strong><br>
+                            <small style="color: #777;">{{ addon.description }}</small>
+                        </div>
+
+                    </div>
+
+                    <div class="text-end">
+
+                        <div style="font-size:14px; margin-bottom:5px; font-weight:700; color: var(--primary);">
+                            +Rp {{ addon.price|floatformat:0 }}
+                        </div>
+
+                        <div class="addon-status-badge">
+                            {% if addon.id in preselected_addons %}
+                                <span class="badge bg-success rounded-pill"><i class="fas fa-check"></i></span>
+                            {% else %}
+                                <span class="badge bg-secondary rounded-pill"><i class="fas fa-plus"></i></span>
+                            {% endif %}
+                        </div>
+
+                        <input
+                            type="checkbox"
+                            class="addon-checkbox d-none"
+                            data-price="{{ addon.price }}"
+                            name="addons"
+                            value="{{ addon.id }}"
+                            {% if addon.id in preselected_addons %}checked{% endif %}
+                        >
+
+                    </div>
+
+                </div>
+                {% endfor %}
+
+                <hr style="margin:20px 0;">
+
+                <!-- REFERRAL -->
+                <div class="form-group">
+
+                    <label>Kode Promo</label>
+
+                    <input
+                        type="text"
+                        id="promo-input"
+                        name="referral_code"
+                        placeholder="Masukkan kode promo"
+                        oninput="onPromoInput()"
+                        style="text-transform: uppercase;"
+                    >
+                    <small id="promo-message" style="display:block; margin-top:5px; font-size:12px;"></small>
+
+                </div>
+
+                <!-- PAYMENT -->
+                <div class="section-title" style="font-size:20px;">
+                    💳 Pembayaran
+                </div>
+
+                <div class="payment-option">
+                    <input type="radio" name="payment_method" value="transfer">
+                    🏦 Transfer Bank
+                </div>
+
+                <div class="payment-option">
+                    <input type="radio" name="payment_method" value="ewallet">
+                    📱 E-Wallet
+                </div>
+
+                <div class="payment-option">
+                    <input type="radio" name="payment_method" value="cod">
+                    🚚 COD
+                </div>
+
+                <div class="payment-option">
+                    <input type="radio" name="payment_method" value="qris">
+                    🔳 QRIS
+                </div>
+
+                <hr style="margin:20px 0;">
+
+                <!-- SUMMARY -->
+                <div class="summary-row">
+                    <span>Subtotal</span>
+                    <span id="subtotal-price">
+                        Rp {% if product %}{{ product.price|floatformat:0 }}{% elif bundle %}{{ bundle.bundle_price|floatformat:0 }}{% elif subscription %}{{ subscription.price|floatformat:0 }}{% else %}0{% endif %}
+                    </span>
+                </div>
+
+                <div class="summary-row">
+                    <span>Ongkir</span>
+                    <span id="shipping-price">
+                        Rp 10.000
+                    </span>
+                </div>
+
+                <div class="summary-row">
+                    <span>Biaya Layanan</span>
+                    <span>
+                        Rp 2.000
+                    </span>
+                </div>
+
+                <div class="summary-row">
+                    <span>Diskon</span>
+                    <span id="discount-price">
+                        Rp 0
+                    </span>
+                </div>
+
+                <hr style="margin:20px 0;">
+
+                <div class="summary-row">
+
+                    <strong>Total</strong>
+
+                    <div class="total" id="total-price">
+                        Rp {% if product %}{{ product.price|floatformat:0 }}{% elif bundle %}{{ bundle.bundle_price|floatformat:0 }}{% elif subscription %}{{ subscription.price|floatformat:0 }}{% else %}0{% endif %}
+                    </div>
+
+                </div>
+               
+                <div class="estimate-box">
+                    🚚 Estimasi tiba:
+                    <span id="estimate"></span>
+                </div>
+
+                <button class="checkout-btn">
+                    🛍️ Buat Pesanan
+                </button>
+
+                <div class="small-note">
+                    Total otomatis berubah sesuai quantity & addons
+                </div>
+
+            </div>
+
+            <!-- RIGHT: Data Pemesan (Sticky Sidebar Card) -->
+            <div class="checkout-right">
+
+                <div class="card">
+
+                    <div class="section-title">
+                        👤 Data Pemesan
+                    </div>
+
+                    <div class="form-group">
+                        <label>Nama Lengkap</label>
+                        <input type="text" name="customer_name" value="{{ request.GET.customer_name|default:'' }}">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" name="customer_email" value="{{ request.GET.customer_email|default:'' }}">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Nomor HP</label>
+                        <input type="text" name="customer_phone" value="{{ request.GET.customer_phone|default:'' }}">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Alamat Pengiriman</label>
+                        <textarea name="customer_address">{{ request.GET.customer_address|default:'' }}</textarea>
+                    </div>
+
+                    <!-- MAP -->
+                    <iframe
+                        src="https://maps.google.com/maps?q=batam&t=&z=13&ie=UTF8&iwloc=&output=embed"
+                        width="100%"
+                        height="180"
+                        style="border:0; border-radius:18px;"
+                        allowfullscreen=""
+                        loading="lazy">
+                    </iframe>
+
+                </div>
+
+            </div>
+
+        </div>
+    </form>
+
+<!-- JAVASCRIPT -->
+
+<script>
+
+let quantity = parseInt("{{ form.quantity.value|default:1 }}") || 1;
+
+const basePrice = parseInt("{% if product %}{{ product.price|default:0 }}{% elif bundle %}{{ bundle.bundle_price|default:0 }}{% elif subscription %}{{ subscription.price|default:0 }}{% else %}0{% endif %}");
+
+const serviceFee = 2000;
+let shipping = 10000;
+
+
+
+const now = new Date()
+
+now.setMinutes(now.getMinutes() + 45)
+
+document.getElementById('estimate').innerText =
+now.toLocaleTimeString()
+function increaseQty() {
+
+    quantity++
+
+    document.getElementById('qty-display').innerText = quantity
+    document.getElementById('quantity-input').value = quantity
+
+    updateTotal()
+}
+function decreaseQty() {
+
+    if(quantity > 1){
+
+        quantity--
+
+        document.getElementById('qty-display').innerText = quantity
+        document.getElementById('quantity-input').value = quantity
+
+        updateTotal()
+    }
+}
+
+function toggleAddonCard(cardElement) {
+    const checkbox = cardElement.querySelector('.addon-checkbox');
+    checkbox.checked = !checkbox.checked;
+    
+    const badge = cardElement.querySelector('.addon-status-badge');
+    if (checkbox.checked) {
+        cardElement.classList.add('selected');
+        if (badge) badge.innerHTML = '<span class="badge bg-success rounded-pill"><i class="fas fa-check"></i></span>';
+    } else {
+        cardElement.classList.remove('selected');
+        if (badge) badge.innerHTML = '<span class="badge bg-secondary rounded-pill"><i class="fas fa-plus"></i></span>';
+    }
+    updateTotal();
+}
+
+let couponState = {
+    code: '',
+    isValid: false,
+    discountPercent: 0,
+    freeShipping: false,
+    message: ''
+};
+
+let promoTimeout = null;
+
+function onPromoInput() {
+    clearTimeout(promoTimeout);
+    const code = document.getElementById('promo-input').value.trim().toUpperCase();
+    
+    if (!code) {
+        couponState = { code: '', isValid: false, discountPercent: 0, freeShipping: false, message: '' };
+        document.getElementById('promo-message').innerText = '';
+        updateTotal();
+        return;
+    }
+    
+    // Show a loading text or typing status
+    const msgEl = document.getElementById('promo-message');
+    msgEl.innerText = "Memvalidasi...";
+    msgEl.style.color = "#9B7353";
+    
+    promoTimeout = setTimeout(() => {
+        fetch(`/validate-coupon/?code=${encodeURIComponent(code)}`)
+            .then(res => res.json())
+            .then(data => {
+                couponState = {
+                    code: code,
+                    isValid: data.valid,
+                    discountPercent: data.valid ? data.discount_percent : 0,
+                    freeShipping: data.valid ? data.free_shipping : false,
+                    message: data.message
+                };
+                
+                msgEl.innerText = data.message;
+                if (data.valid) {
+                    msgEl.style.color = '#25D366';
+                    msgEl.style.fontWeight = '700';
+                } else {
+                    msgEl.style.color = '#B8431D';
+                    msgEl.style.fontWeight = '600';
+                }
+                
+                updateTotal();
+            })
+            .catch(err => {
+                console.error("Gagal memvalidasi promo:", err);
+                msgEl.innerText = "Gagal memvalidasi promo.";
+                msgEl.style.color = '#B8431D';
+            });
+    }, 400);
+}
+
+function updateTotal(){
+
+    let subtotal = basePrice * quantity
+
+    let addonTotal = 0
+    document.querySelectorAll('.addon-checkbox:checked').forEach(item => {
+        addonTotal += parseInt(item.dataset.price || 0)
+    })
+
+    if (subtotal >= 50000) {
+        shipping = 0
+    } else {
+        shipping = 10000
+    }
+
+    let discount = 0
+    if (couponState.isValid) {
+        if (couponState.freeShipping) {
+            shipping = 0;
+        }
+        discount = subtotal * (couponState.discountPercent / 100);
+    }
+
+    const finalTotal =
+        subtotal +
+        addonTotal +
+        shipping +
+        serviceFee -
+        discount
+
+    document.getElementById('subtotal-price').innerText =
+        'Rp ' + subtotal.toLocaleString()
+    document.getElementById('shipping-price').innerText =
+    shipping === 0
+    ? 'GRATIS 🎉'
+    : 'Rp ' + shipping.toLocaleString()
+    document.getElementById('discount-price').innerText =
+        '- Rp ' + discount.toLocaleString()
+
+    document.getElementById('total-price').innerText =
+        'Rp ' + finalTotal.toLocaleString()
+}
+
+updateTotal()
+
+</script>
+
+    </div>
+
+</div>
+
+{% endblock %}

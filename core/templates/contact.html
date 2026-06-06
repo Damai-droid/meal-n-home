@@ -1,0 +1,271 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Kontak — Meal N Home{% endblock %}
+
+{% block extra_css %}
+<style>
+.contact-social-card {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    background: #fff;
+    border-radius: 16px;
+    padding: 22px 24px;
+    box-shadow: 0 4px 20px rgba(212,85,42,.08);
+    text-decoration: none;
+    color: inherit;
+    transition: all .3s;
+    border: 2px solid transparent;
+    margin-bottom: 16px;
+}
+.contact-social-card.wa-card:hover  { border-color: #25D366; background: #f0fff5; transform: translateX(5px); }
+.contact-social-card.ig-card:hover  { border-color: #E1306C; background: #fff0f4; transform: translateX(5px); }
+.social-icon-box {
+    width: 56px; height: 56px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    flex-shrink: 0;
+    color: #fff;
+}
+.wa-icon-box  { background: #25D366; }
+.ig-icon-box  { background: linear-gradient(135deg,#E1306C,#833AB4); }
+.arrow-icon { margin-left: auto; color: var(--text-light); font-size: 1rem; transition: transform .2s; }
+.contact-social-card:hover .arrow-icon { transform: translateX(4px); }
+
+.faq-btn {
+    background: none;
+    border: none;
+    text-align: left;
+    width: 100%;
+    padding: 14px 0;
+    font-weight: 700;
+    font-size: .9rem;
+    color: var(--text-dark);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+.faq-answer {
+    font-size: .85rem;
+    color: var(--text-light);
+    line-height: 1.7;
+    padding-bottom: 12px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- HEADER WITH BACKGROUND IMAGE -->
+<div class="position-relative border-bottom" style="min-height:260px;border-color:rgba(212,85,42,.1)!important;">
+
+    <!-- Background Image -->
+    <div id="contactHeroBg"
+         data-bg="{% static 'img/baner2.jpeg' %}"
+         style="position:absolute;inset:0;background-size:cover;background-position:center;background-repeat:no-repeat;">
+    </div>
+
+    <!-- Orange Overlay — ubah 0.45 untuk atur transparansi -->
+    <div style="position:absolute;inset:0;background:rgba(255, 188, 166, 0.3);"></div>
+
+    <!-- Content -->
+    <div class="container position-relative py-5" style="z-index:2;">
+        <div class="section-label mb-3"
+             style="background:rgba(255,255,255,0.2);color:#fff;border:1px solid rgba(255,255,255,0.3);">
+            📞 Kontak
+        </div>
+        <h1 class="font-playfair fw-700 mb-2 text-white">Hubungi Kami</h1>
+        <p class="mb-0" style="color:rgba(90, 85, 85, 0.85);">
+            Ada pertanyaan, saran, atau ingin bermitra? Chat langsung via WhatsApp atau Instagram kami!
+        </p>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="row g-5">
+
+        <!-- LEFT: Contacts + Info + FAQ -->
+        <div class="col-lg-5">
+
+            <!-- Social Contact Cards -->
+            <h5 class="font-playfair fw-700 mb-3" style="color:var(--text-dark);">Chat Langsung</h5>
+
+            <a href="https://wa.me/6281234567890?text=Halo%20Meal%20N%20Home!%20Saya%20mau%20tanya%20tentang..."
+               target="_blank" class="contact-social-card wa-card d-flex">
+                <div class="social-icon-box wa-icon-box">
+                    <i class="fab fa-whatsapp"></i>
+                </div>
+                <div>
+                    <div class="fw-700 mb-1">WhatsApp</div>
+                    <div class="text-faint small mb-1">+62 812-3456-7890</div>
+                    <div class="small fw-700 text-uppercase" style="color:var(--primary);letter-spacing:.05em;font-size:.7rem;">Klik untuk chat langsung</div>
+                </div>
+                <i class="fas fa-arrow-right arrow-icon"></i>
+            </a>
+
+            <a href="https://instagram.com/mealnhome" target="_blank" class="contact-social-card ig-card d-flex">
+                <div class="social-icon-box ig-icon-box">
+                    <i class="fab fa-instagram"></i>
+                </div>
+                <div>
+                    <div class="fw-700 mb-1">Instagram</div>
+                    <div class="text-faint small mb-1">@mealnhome</div>
+                    <div class="small fw-700 text-uppercase" style="color:var(--primary);letter-spacing:.05em;font-size:.7rem;">Follow & DM kami</div>
+                </div>
+                <i class="fas fa-arrow-right arrow-icon"></i>
+            </a>
+
+            <!-- Jam Operasional -->
+            <div class="card p-4 mb-3">
+                <h6 class="fw-700 mb-3">⏰ Jam Operasional</h6>
+                <ul class="list-unstyled text-faint mb-0" style="font-size:.88rem;line-height:2.1;">
+                    <li><i class="fas fa-circle me-2 text-primary-custom" style="font-size:.4rem;vertical-align:middle;"></i><strong>Senin – Jumat:</strong> 08.00 – 20.00 WIB</li>
+                    <li><i class="fas fa-circle me-2 text-primary-custom" style="font-size:.4rem;vertical-align:middle;"></i><strong>Sabtu:</strong> 09.00 – 18.00 WIB</li>
+                    <li><i class="fas fa-circle me-2 text-primary-custom" style="font-size:.4rem;vertical-align:middle;"></i><strong>Minggu:</strong> 10.00 – 15.00 WIB</li>
+                </ul>
+            </div>
+
+            <!-- FAQ -->
+            <div class="card p-4">
+                <h6 class="fw-700 mb-1">❓ FAQ</h6>
+                <p class="text-faint small mb-3">Pertanyaan yang sering ditanyakan</p>
+
+                <div class="border-bottom" style="border-color:var(--cream-dark)!important;">
+                    <button class="faq-btn" onclick="toggleFaq(this)">
+                        Berapa minimum order? <i class="fas fa-plus small"></i>
+                    </button>
+                    <div class="faq-answer" style="display:none;">
+                        Tidak ada minimum order! Anda bisa pesan mulai dari 1 paket menu saja.
+                    </div>
+                </div>
+                <div class="border-bottom" style="border-color:var(--cream-dark)!important;">
+                    <button class="faq-btn" onclick="toggleFaq(this)">
+                        Bagaimana cara pembayaran? <i class="fas fa-plus small"></i>
+                    </button>
+                    <div class="faq-answer" style="display:none;">
+                        Kami menerima transfer bank, e-wallet (GoPay, OVO, Dana), QRIS, dan COD untuk area tertentu.
+                    </div>
+                </div>
+                <div class="border-bottom" style="border-color:var(--cream-dark)!important;">
+                    <button class="faq-btn" onclick="toggleFaq(this)">
+                        Apakah bahan sudah dicuci? <i class="fas fa-plus small"></i>
+                    </button>
+                    <div class="faq-answer" style="display:none;">
+                        Ya! Semua bahan sudah dicuci bersih, dipotong sesuai kebutuhan resep, dan dikemas higienis.
+                    </div>
+                </div>
+                <div>
+                    <button class="faq-btn" onclick="toggleFaq(this)">
+                        Berapa lama ketahanan bahan? <i class="fas fa-plus small"></i>
+                    </button>
+                    <div class="faq-answer" style="display:none;">
+                        Bahan segar tahan 2–3 hari di kulkas. Kami rekomendasikan segera diolah untuk kualitas terbaik.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT: B2B Partnership Form -->
+        <div class="col-lg-7">
+            <div class="card p-4 p-md-5">
+                <div class="section-label mb-3">🤝 Kerjasama B2B</div>
+                <h3 class="font-playfair fw-700 mb-2" style="color:var(--text-dark);">Ajukan Kemitraan</h3>
+                <p class="text-faint small lh-lg mb-4">
+                    Kami melayani kerjasama dengan perusahaan, kantor, sekolah, hotel, dan instansi untuk kebutuhan meal kit dalam jumlah besar. Tim kami akan menghubungi Anda dalam 1×24 jam!
+                </p>
+
+                {% if messages %}
+                <div class="alert alert-success border-0 rounded-3 mb-4" style="background:#f0fff5;border-left:4px solid #25D366!important;">
+                    {% for message in messages %}
+                    <i class="fas fa-check-circle me-2" style="color:#25D366;"></i>{{ message }}
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <form method="post">
+                    {% csrf_token %}
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Nama Perusahaan / Instansi *</label>
+                            <input type="text" name="company_name" class="form-control" placeholder="PT. Contoh Indonesia" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Nama PIC / Contact Person *</label>
+                            <input type="text" name="contact_person" class="form-control" placeholder="Budi Santoso" required>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Email *</label>
+                            <input type="email" name="email" class="form-control" placeholder="budi@perusahaan.com" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">No. WhatsApp *</label>
+                            <input type="text" name="phone" class="form-control" placeholder="08xxxxxxxxxx" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Kebutuhan & Pesan *</label>
+                        <textarea name="message" class="form-control" rows="5"
+                            placeholder="Ceritakan kebutuhan kerjasama Anda: jenis usaha, estimasi jumlah pesanan per minggu, area lokasi, dll..."
+                            required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 py-3 mb-3">
+                        <i class="fas fa-paper-plane me-2"></i>Kirim Pengajuan Kerjasama
+                    </button>
+                </form>
+
+                <hr class="my-3" style="border-color:var(--cream-dark);">
+                <p class="text-faint small text-center mb-2">Lebih suka chat langsung?</p>
+                <div class="d-flex gap-2 justify-content-center">
+                    <a href="https://wa.me/6281234567890?text=Halo!%20Saya%20ingin%20tanya%20soal%20kerjasama%20B2B"
+                       target="_blank" class="btn btn-wa btn-sm px-4 py-2">
+                        <i class="fab fa-whatsapp me-1"></i>Chat WA
+                    </a>
+                    <a href="https://instagram.com/mealnhome" target="_blank" class="btn btn-ig btn-sm px-4 py-2">
+                        <i class="fab fa-instagram me-1"></i>DM Instagram
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function toggleFaq(btn) {
+    const answer = btn.nextElementSibling;
+    const icon   = btn.querySelector('i');
+    const isOpen = answer.style.display === 'block';
+    answer.style.display = isOpen ? 'none' : 'block';
+    icon.className = isOpen ? 'fas fa-plus small' : 'fas fa-minus small';
+}
+</script>
+<script>
+    // Contact hero background
+    const contactBg = document.getElementById('contactHeroBg');
+    if (contactBg) {
+        contactBg.style.backgroundImage = "url('" + contactBg.dataset.bg + "')";
+    }
+
+    function toggleFaq(btn) {
+        const answer = btn.nextElementSibling;
+        const icon   = btn.querySelector('i');
+        const isOpen = answer.style.display === 'block';
+        answer.style.display = isOpen ? 'none' : 'block';
+        icon.className = isOpen ? 'fas fa-plus small' : 'fas fa-minus small';
+    }
+</script>
+{% endblock %}

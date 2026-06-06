@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+{% block title %}Pesanan Berhasil{% endblock %}
+
+{% block content %}
+
+<div class="success-container">
+
+    <div class="success-card">
+
+        <div class="success-icon">
+            ✅
+        </div>
+
+        <h1>Pesanan Berhasil!</h1>
+
+        <p>
+            Terima kasih sudah memesan di Meal N Home
+        </p>
+
+        <div class="order-box">
+
+            <div class="row">
+                <span>Kode Pesanan</span>
+                <strong style="color: var(--primary); font-weight: 800;">{{ order.order_code }}</strong>
+            </div>
+
+            <div class="row">
+                <span>Status</span>
+                <strong>{{ order.get_status_display }}</strong>
+            </div>
+
+            <div class="row">
+                <span>Total</span>
+                <strong>Rp {{ order.total_price|floatformat:0 }}</strong>
+            </div>
+
+            <div class="row">
+                <span>Pembayaran</span>
+                <strong>{{ order.get_payment_method_display }}</strong>
+            </div>
+
+        </div>
+
+        <div class="btn-group" style="flex-direction: column; gap: 10px;">
+
+            <div style="display: flex; gap: 10px; width: 100%;">
+                <a href="{% url 'order_detail' order.id %}" class="home-btn" style="background: #faf7f4; border: 1.5px solid var(--cream-dark); color: var(--text-mid);">
+                    Lihat Detail
+                </a>
+                <a href="{% url 'track_order' %}?code={{ order.order_code }}" class="track-btn">
+                    Lacak Pesanan 🚚
+                </a>
+            </div>
+
+            <a href="{% url 'home' %}" class="home-btn" style="width: 100%;">
+                Kembali ke Home
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+<style>
+
+.success-container{
+    min-height:80vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:40px;
+}
+
+.success-card{
+    background:white;
+    width:100%;
+    max-width:550px;
+    padding:40px;
+    border-radius:30px;
+    box-shadow:0 5px 20px rgba(0,0,0,0.08);
+    text-align:center;
+}
+
+.success-icon{
+    font-size:70px;
+    margin-bottom:20px;
+}
+
+.order-box{
+    margin-top:30px;
+    background:#faf7f4;
+    padding:20px;
+    border-radius:20px;
+}
+
+.row{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:15px;
+}
+
+.btn-group{
+    margin-top:30px;
+    display:flex;
+    gap:15px;
+}
+
+.home-btn,
+.track-btn{
+    flex:1;
+    text-decoration:none;
+    padding:14px;
+    border-radius:50px;
+    font-weight:700;
+    text-align:center;
+}
+
+.home-btn{
+    background:#eee;
+    color:#222;
+}
+
+.track-btn{
+    background:#e2633a;
+    color:white;
+}
+
+</style>
+
+{% endblock %}

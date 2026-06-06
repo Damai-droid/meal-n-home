@@ -1,0 +1,447 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Konfigurasi Langganan — Meal N Home{% endblock %}
+
+{% block extra_css %}
+<style>
+.config-wrapper {
+    width: 90%;
+    max-width: 1000px;
+    margin: 40px auto;
+}
+
+.config-title {
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.config-title h1 {
+    font-size: 38px;
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.config-title p {
+    color: var(--text-light);
+    margin-top: 8px;
+}
+
+.config-container {
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+}
+
+.config-left {
+    flex: 1.4;
+    background: white;
+    padding: 35px;
+    border-radius: 24px;
+    box-shadow: 0 10px 30px rgba(212,85,42,0.06);
+    border: 1px solid rgba(212,85,42,0.08);
+}
+
+.config-right {
+    flex: 0.9;
+    position: sticky;
+    top: 100px;
+}
+
+.plan-summary-card {
+    background: linear-gradient(135deg, var(--text-dark) 0%, #3a200f 100%);
+    color: white;
+    padding: 30px;
+    border-radius: 24px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    position: relative;
+    overflow: hidden;
+}
+
+.plan-summary-card::before {
+    content: '📅';
+    position: absolute;
+    font-size: 8rem;
+    right: -10px;
+    bottom: -20px;
+    opacity: 0.08;
+    pointer-events: none;
+}
+
+.config-section-title {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--text-dark);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid var(--cream-dark);
+    padding-bottom: 8px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    font-weight: 700;
+    color: var(--text-mid);
+    font-size: 0.88rem;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.form-control-custom, .form-select-custom {
+    width: 100%;
+    padding: 14px 18px;
+    border-radius: 14px;
+    border: 1.5px solid var(--cream-dark);
+    background: var(--cream);
+    color: var(--text-dark);
+    font-weight: 500;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+.form-control-custom:focus, .form-select-custom:focus {
+    border-color: var(--primary);
+    background: white;
+    box-shadow: 0 0 0 4px rgba(212,85,42,0.12);
+}
+
+textarea.form-control-custom {
+    resize: none;
+    height: 90px;
+}
+
+.days-grid, .time-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+}
+
+.option-pill {
+    background: var(--cream);
+    border: 1.5px solid var(--cream-dark);
+    padding: 14px 18px;
+    border-radius: 14px;
+    cursor: pointer;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.25s ease;
+}
+
+.option-pill:hover {
+    border-color: var(--primary-light);
+    background: #fffdfb;
+}
+
+.option-pill.active {
+    background: #fff8f5;
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.option-pill input[type="radio"] {
+    display: none;
+}
+
+.option-pill-circle {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 2px solid var(--text-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.option-pill.active .option-pill-circle {
+    border-color: var(--primary);
+    background: var(--primary);
+}
+
+.option-pill.active .option-pill-circle::after {
+    content: '';
+    width: 6px;
+    height: 6px;
+    background: white;
+    border-radius: 50%;
+    display: block;
+}
+
+.btn-proceed {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    color: white;
+    font-weight: 700;
+    font-size: 1.05rem;
+    border-radius: 50px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(212,85,42,0.25);
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-proceed:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(212,85,42,0.38);
+}
+
+.step-indicator {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.step-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--text-light);
+}
+
+.step-item.active {
+    color: var(--primary);
+}
+
+.step-number {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--cream-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.72rem;
+}
+
+.step-item.active .step-number {
+    background: var(--primary);
+    color: white;
+}
+
+@media(max-width: 900px) {
+    .config-container {
+        flex-direction: column;
+    }
+    .config-right {
+        width: 100%;
+        position: relative;
+        top: 0;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="config-wrapper">
+    
+    <div class="config-title">
+        <div class="section-label mb-2">⚡ Kustomisasi Paket</div>
+        <h1>Konfigurasi Paket Langganan 📝</h1>
+        <p>Sesuaikan jadwal & preferensi makanan Anda sebelum melakukan checkout</p>
+    </div>
+
+    <!-- Step Indicator -->
+    <div class="step-indicator">
+        <div class="step-item active">
+            <span class="step-number">1</span>
+            <span>Konfigurasi & Data</span>
+        </div>
+        <div class="text-faint">➔</div>
+        <div class="step-item">
+            <span class="step-number">2</span>
+            <span>Metode Pembayaran</span>
+        </div>
+    </div>
+
+    <div class="config-container">
+        
+        <!-- LEFT: FORM CONFIG -->
+        <div class="config-left">
+            <form method="POST" id="configForm">
+                {% csrf_token %}
+
+                <!-- 1. Jadwal Pengiriman -->
+                <div class="config-section-title">
+                    <i class="fas fa-calendar-alt text-primary-custom"></i> 1. Jadwal Pengiriman
+                </div>
+                
+                <div class="form-group">
+                    <label>Pilih Hari Pengiriman Rutin</label>
+                    <div class="days-grid">
+                        {% for day_opt in delivery_days_options %}
+                        <div class="option-pill {% if forloop.first %}active{% endif %}" onclick="selectOption(this, 'days')">
+                            <span class="option-pill-circle"></span>
+                            <span>{{ day_opt }}</span>
+                            <input type="radio" name="delivery_days" value="{{ day_opt }}" {% if forloop.first %}checked{% endif %}>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="form-group mt-3">
+                    <label>Pilih Waktu Pengantaran</label>
+                    <div class="time-grid">
+                        {% for time_opt in delivery_time_options %}
+                        <div class="option-pill {% if forloop.first %}active{% endif %}" onclick="selectOption(this, 'time')">
+                            <span class="option-pill-circle"></span>
+                            <span>{{ time_opt }}</span>
+                            <input type="radio" name="delivery_time" value="{{ time_opt }}" {% if forloop.first %}checked{% endif %}>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- 2. Preferensi Makanan -->
+                <div class="config-section-title mt-4">
+                    <i class="fas fa-heartbeat text-primary-custom"></i> 2. Preferensi Makanan
+                </div>
+
+                <div class="form-group">
+                    <label for="diet_preference">Pilihan Diet (Opsional)</label>
+                    <select name="diet_preference" id="diet_preference" class="form-select-custom">
+                        {% for diet in diet_options %}
+                        <option value="{{ diet }}">{{ diet }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- 3. Data Penerima -->
+                <div class="config-section-title mt-4">
+                    <i class="fas fa-user text-primary-custom"></i> 3. Data & Alamat Penerima
+                </div>
+
+                <div class="form-group">
+                    <label>Nama Lengkap</label>
+                    <input type="text" name="customer_name" class="form-control-custom" placeholder="Contoh: Alyn" required value="{{ user.username }}">
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        <label>Email</label>
+                        <input type="email" name="customer_email" class="form-control-custom" placeholder="alyn@contoh.com" required value="{{ user.email }}">
+                    </div>
+                    <div class="col-md-6 form-group">
+                        <label>Nomor HP (WhatsApp Aktif)</label>
+                        <input type="text" name="customer_phone" class="form-control-custom" placeholder="08xxxxxxxxxx" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Alamat Pengiriman Lengkap (Batam)</label>
+                    <textarea name="customer_address" class="form-control-custom" placeholder="Nama jalan, nomor rumah, kelurahan, kecamatan..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Catatan Tambahan untuk Pengantar/Chef (Opsional)</label>
+                    <textarea name="notes" class="form-control-custom" placeholder="Contoh: Titip di pos satpam, alergi kacang, sambal dipisah..."></textarea>
+                </div>
+
+                <!-- Persetujuan S&K -->
+                <div class="form-check my-4">
+                    <input class="form-check-input" type="checkbox" name="agree" id="agreeCheckbox" required>
+                    <label class="form-check-label small text-mid fw-600" for="agreeCheckbox" style="cursor:pointer; display:inline;">
+                        Saya menyetujui Ketentuan Layanan, Pengiriman Rutin & Pembayaran paket langganan Meal N Home.
+                    </label>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn-proceed">
+                    <span>Lanjut ke Pembayaran</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </form>
+        </div>
+
+        <!-- RIGHT: SUMMARY PLAN -->
+        <div class="config-right">
+            <div class="plan-summary-card">
+                <h5 class="text-warm font-playfair fw-700 mb-2">Ringkasan Paket</h5>
+                <h3 class="fw-800 text-white font-playfair mb-1">{{ plan.name }}</h3>
+                <div class="badge bg-primary text-white rounded-pill mb-4" style="font-size:0.75rem;">
+                    {{ plan.get_duration_display }}
+                </div>
+                
+                <hr style="border-color: rgba(255,255,255,0.15); margin: 20px 0;">
+
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="small opacity-75">Pengiriman per Minggu</span>
+                    <span class="fw-700">{{ plan.deliveries_per_week }}x Pengiriman</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="small opacity-75">Bahan Premium</span>
+                    <span class="fw-700">Ya, Segar & Alami</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="small opacity-75">Ongkos Kirim</span>
+                    <span class="fw-700 text-success">GRATIS 🎉</span>
+                </div>
+
+                <hr style="border-color: rgba(255,255,255,0.15); margin: 20px 0;">
+
+                <div class="d-flex align-items-baseline justify-content-between">
+                    <span class="opacity-75">Harga Paket</span>
+                    <div>
+                        <div class="text-warm fw-800 fs-4">Rp {{ plan.price|floatformat:0 }}</div>
+                        {% if plan.original_price > plan.price %}
+                        <div class="small text-decoration-line-through opacity-50 text-end">Rp {{ plan.original_price|floatformat:0 }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% if plan.discount_percent > 0 %}
+                <div class="text-end mt-2">
+                    <span class="badge bg-danger rounded-pill" style="font-size:0.7rem;">Hemat {{ plan.discount_percent }}%</span>
+                </div>
+                {% endif %}
+            </div>
+            
+            <div class="card p-3 mt-3 shadow-sm" style="border-radius:18px; background:#fffdfb; border: 1px solid var(--cream-dark);">
+                <div class="d-flex gap-2">
+                    <span style="font-size:1.4rem;">💡</span>
+                    <div class="small text-mid">
+                        <strong>Info Langganan:</strong> Pengiriman akan diantar langsung ke rumah Anda sesuai hari & waktu yang Anda pilih secara berkala. Anda dapat mengganti jadwal di kemudian hari dengan menghubungi CS.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function selectOption(element, type) {
+    // Deselect current options in the same group
+    const parent = element.closest('.form-group');
+    parent.querySelectorAll('.option-pill').forEach(pill => {
+        pill.classList.remove('active');
+        const radio = pill.querySelector('input[type="radio"]');
+        if (radio) radio.checked = false;
+    });
+
+    // Select this option
+    element.classList.add('active');
+    const radio = element.querySelector('input[type="radio"]');
+    if (radio) {
+        radio.checked = true;
+    }
+}
+</script>
+{% endblock %}

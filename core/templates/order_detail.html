@@ -1,0 +1,512 @@
+{% extends 'base.html' %}
+{% block title %}Detail Pesanan {{ order.order_code }} — Meal N Home{% endblock %}
+
+{% block extra_css %}
+<style>
+.detail-hero {
+    background: linear-gradient(135deg, var(--text-dark) 0%, #3a200f 100%);
+    padding: 48px 0 40px;
+    position: relative;
+    overflow: hidden;
+}
+.detail-hero::before {
+    content: '📦';
+    position: absolute;
+    font-size: 12rem;
+    right: -30px;
+    top: -30px;
+    opacity: .04;
+    pointer-events: none;
+}
+
+.detail-card {
+    background: #fff;
+    border-radius: 24px;
+    box-shadow: 0 8px 40px rgba(212,85,42,.08);
+    overflow: hidden;
+    margin-bottom: 24px;
+}
+.detail-card-header {
+    padding: 20px 28px;
+    border-bottom: 1px solid var(--cream-dark);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    color: var(--text-dark);
+    font-size: .95rem;
+}
+
+/* Info rows */
+.drow {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 13px 28px;
+    border-bottom: 1px solid var(--cream-dark);
+    gap: 16px;
+}
+.drow:last-child { border-bottom: none; }
+.drow-label { color: var(--text-light); font-size: .84rem; font-weight: 600; flex-shrink: 0; }
+.drow-value { font-weight: 700; color: var(--text-dark); text-align: right; font-size: .88rem; }
+
+/* Order Code Display */
+.order-code-display {
+    background: rgba(255,255,255,.12);
+    border: 1.5px solid rgba(255,255,255,.25);
+    border-radius: 50px;
+    padding: 8px 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: background .2s;
+    user-select: none;
+}
+.order-code-display:hover { background: rgba(255,255,255,.2); }
+.order-code-text { font-size: 1.2rem; font-weight: 800; letter-spacing: .08em; color: #fff; }
+
+/* Status Badge */
+.status-badge-detail {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 18px;
+    border-radius: 50px;
+    font-size: .8rem;
+    font-weight: 800;
+    letter-spacing: .04em;
+}
+.status-pending    { background: #FEF3C7; color: #92400E; }
+.status-paid       { background: #DBEAFE; color: #1E40AF; }
+.status-processing { background: #EDE9FE; color: #5B21B6; }
+.status-delivered  { background: #CFFAFE; color: #0E7490; }
+.status-completed  { background: #D1FAE5; color: #065F46; }
+.status-cancelled  { background: #FEE2E2; color: #991B1B; }
+
+/* 5-Step Progress */
+.progress-track {
+    position: relative;
+    padding: 12px 28px 32px;
+}
+.progress-line-bg {
+    position: absolute;
+    top: 40px;
+    left: calc(10% + 28px + 25px);
+    right: calc(10% + 28px + 25px);
+    height: 4px;
+    background: var(--cream-dark);
+    border-radius: 4px;
+    z-index: 1;
+}
+.progress-line-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--warm), var(--primary));
+    border-radius: 4px;
+    transition: width 1.2s cubic-bezier(.16,1,.3,1);
+    box-shadow: 0 0 12px rgba(212,85,42,.4);
+}
+.p-steps-row {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    z-index: 2;
+}
+.p-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 20%;
+}
+.p-step-icon {
+    width: 50px; height: 50px;
+    border-radius: 50%;
+    background: #fff;
+    border: 3px solid var(--cream-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    margin-bottom: 8px;
+    transition: all .4s cubic-bezier(.16,1,.3,1);
+    box-shadow: 0 4px 12px rgba(0,0,0,.04);
+}
+.p-step-label {
+    font-size: .65rem;
+    font-weight: 600;
+    color: var(--text-light);
+    text-align: center;
+    line-height: 1.3;
+}
+.p-step.done .p-step-icon { background: var(--cream); border-color: var(--primary); }
+.p-step.done .p-step-label { color: var(--text-mid); font-weight: 700; }
+.p-step.current .p-step-icon {
+    background: var(--primary);
+    border-color: var(--primary);
+    transform: scale(1.15);
+    box-shadow: 0 8px 24px rgba(212,85,42,.35);
+}
+.p-step.current .p-step-label { color: var(--primary); font-weight: 800; }
+
+/* Menu Item Row */
+.menu-item-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 28px;
+    border-bottom: 1px solid var(--cream-dark);
+}
+.menu-item-row:last-child { border-bottom: none; }
+.menu-thumb {
+    width: 60px; height: 60px;
+    border-radius: 12px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+.menu-thumb-placeholder {
+    width: 60px; height: 60px;
+    border-radius: 12px;
+    background: var(--cream-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    flex-shrink: 0;
+}
+
+/* Price total */
+.price-total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 28px;
+    background: var(--cream);
+}
+.price-total-amount {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--primary);
+}
+
+/* Copy Toast */
+.copy-toast {
+    position: fixed; bottom: 30px; left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--text-dark); color: #fff;
+    padding: 10px 24px; border-radius: 50px;
+    font-size: .84rem; font-weight: 700;
+    opacity: 0; transition: all .3s;
+    z-index: 9999; pointer-events: none;
+}
+.copy-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+@media (max-width: 576px) {
+    .p-step-icon { width: 38px; height: 38px; font-size: .9rem; }
+    .progress-line-bg { top: 30px; }
+    .drow, .menu-item-row, .price-total-row { padding-left: 18px; padding-right: 18px; }
+    .detail-card-header { padding: 16px 18px; }
+    .progress-track { padding-left: 18px; padding-right: 18px; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- ══ HERO ══ -->
+<section class="detail-hero">
+    <div class="container">
+        <div class="d-flex flex-wrap align-items-start justify-content-between gap-4">
+            <div>
+                <div class="text-white opacity-60 small fw-600 mb-2">
+                    <a href="{% url 'home' %}" class="text-white opacity-60 text-decoration-none">Home</a>
+                    <span class="mx-1">›</span> Detail Pesanan
+                </div>
+                <h1 class="font-playfair fw-700 text-white mb-3" style="font-size:clamp(1.5rem,3vw,2rem);">
+                    📦 Detail Pesanan
+                </h1>
+                <!-- Kode pesanan — bisa diklik untuk copy -->
+                <div class="order-code-display" onclick="copyCode('{{ order.order_code }}')" title="Klik untuk menyalin kode">
+                    <i class="fas fa-copy text-white opacity-75" style="font-size:.8rem;"></i>
+                    <span class="order-code-text">{{ order.order_code }}</span>
+                    <span class="text-white opacity-60" style="font-size:.72rem;">SALIN</span>
+                </div>
+            </div>
+            <div class="text-end">
+                <div class="text-white opacity-60 small mb-1">Status Saat Ini</div>
+                <span class="status-badge-detail status-{{ order.status }}">
+                    {% if order.status == 'pending' %}⏳{% elif order.status == 'paid' %}💳
+                    {% elif order.status == 'processing' %}👨‍🍳{% elif order.status == 'delivered' %}🚚
+                    {% elif order.status == 'completed' %}✅{% else %}❌{% endif %}
+                    {{ order.get_status_display }}
+                </span>
+                <div class="text-white opacity-50 small mt-2">{{ order.created_at|date:"d M Y, H:i" }}</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ══ MAIN CONTENT ══ -->
+<div class="container py-5">
+    <div class="row g-4">
+
+        <!-- ── KIRI: Progress + Detail ── -->
+        <div class="col-lg-8">
+
+            <!-- Progress Track 5 Step -->
+            <div class="detail-card mb-4">
+                <div class="detail-card-header">
+                    <i class="fas fa-map-marked-alt text-primary-custom"></i>
+                    Status Perjalanan Pesanan
+                </div>
+
+                {% with tracking=order.get_tracking_step %}
+                {% with step=tracking.0 pct=tracking.1 %}
+
+                <div class="progress-track">
+                    <div class="progress-line-bg">
+                        <div class="progress-line-fill" id="progressFill" style="width:{{ pct }}%;"></div>
+                    </div>
+                    <div class="p-steps-row">
+
+                        <div class="p-step {% if step >= 1 %}{% if step == 1 %}current{% else %}done{% endif %}{% endif %}">
+                            <div class="p-step-icon">📝</div>
+                            <div class="p-step-label">Pesanan<br>Diterima</div>
+                        </div>
+
+                        <div class="p-step {% if step >= 2 %}{% if step == 2 %}current{% else %}done{% endif %}{% endif %}">
+                            <div class="p-step-icon">✅</div>
+                            <div class="p-step-label">Sudah<br>Dibayar</div>
+                        </div>
+
+                        <div class="p-step {% if step >= 3 %}{% if step == 3 %}current{% else %}done{% endif %}{% endif %}">
+                            <div class="p-step-icon">👨‍🍳</div>
+                            <div class="p-step-label">Sedang<br>Disiapkan</div>
+                        </div>
+
+                        <div class="p-step {% if step >= 4 %}{% if step == 4 %}current{% else %}done{% endif %}{% endif %}">
+                            <div class="p-step-icon">🚚</div>
+                            <div class="p-step-label">Dalam<br>Pengiriman</div>
+                        </div>
+
+                        <div class="p-step {% if step >= 5 %}{% if step == 5 %}current{% else %}done{% endif %}{% endif %}">
+                            <div class="p-step-icon">🏠</div>
+                            <div class="p-step-label">Pesanan<br>Selesai</div>
+                        </div>
+
+                    </div>
+                </div>
+
+                {% endwith %}{% endwith %}
+            </div>
+
+            <!-- Menu yang Dipesan -->
+            <div class="detail-card">
+                <div class="detail-card-header">
+                    <i class="fas fa-utensils text-primary-custom"></i>
+                    Menu yang Dipesan
+                </div>
+
+                {% if order.product %}
+                <div class="menu-item-row">
+                    {% if order.product.image %}
+                    <img src="{{ order.product.image.url }}" class="menu-thumb" alt="{{ order.product.name }}">
+                    {% else %}
+                    <div class="menu-thumb-placeholder">🍽️</div>
+                    {% endif %}
+                    <div class="flex-grow-1">
+                        <div class="fw-700" style="color:var(--text-dark);">{{ order.product.name }}</div>
+                        <div class="text-faint small">{{ order.product.get_portion_display }}</div>
+                    </div>
+                    <div class="text-end">
+                        <div class="badge-warm">×{{ order.quantity }}</div>
+                        <div class="fw-700 mt-1 text-primary-custom">Rp {{ order.product.price|floatformat:0 }}</div>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if order.bundle %}
+                <div class="menu-item-row">
+                    <div class="menu-thumb-placeholder" style="font-size: 1.6rem;">📦</div>
+                    <div class="flex-grow-1">
+                        <div class="fw-700" style="color:var(--text-dark);">{{ order.bundle.name }}</div>
+                        <div class="text-faint small">Paket Hemat (Bundling)</div>
+                        <div class="mt-1 small" style="color: var(--text-mid);">
+                            Isi: {% for p in order.bundle.products.all %}<span class="badge bg-cream text-mid border" style="font-size:.72rem;">{{ p.name }}</span>{% if not forloop.last %} {% endif %}{% endfor %}
+                        </div>
+                    </div>
+                    <div class="text-end">
+                        <div class="badge-warm">×{{ order.quantity }}</div>
+                        <div class="fw-700 mt-1 text-primary-custom">Rp {{ order.bundle.bundle_price|floatformat:0 }}</div>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if order.subscription %}
+                <div class="menu-item-row">
+                    <div class="menu-thumb-placeholder">📅</div>
+                    <div class="flex-grow-1">
+                        <div class="fw-700" style="color:var(--text-dark);">{{ order.subscription.name }}</div>
+                        <div class="text-faint small">{{ order.subscription.get_duration_display }} · {{ order.subscription.deliveries_per_week }}×/minggu</div>
+                    </div>
+                    <div class="fw-700 text-primary-custom">Rp {{ order.subscription.price|floatformat:0 }}</div>
+                </div>
+                {% endif %}
+
+                {% for addon in order.addons.all %}
+                <div class="menu-item-row">
+                    <div class="menu-thumb-placeholder" style="font-size:1.2rem;">{{ addon.icon }}</div>
+                    <div class="flex-grow-1">
+                        <div class="fw-700" style="color:var(--text-dark);">{{ addon.name }}</div>
+                        <div class="text-faint small">Add-on tambahan</div>
+                    </div>
+                    <div class="fw-700 text-primary-custom">+Rp {{ addon.price|floatformat:0 }}</div>
+                </div>
+                {% endfor %}
+
+                {% if not order.product and not order.subscription and not order.bundle %}
+                <div class="p-4 text-center text-faint">
+                    <div style="font-size:2rem;" class="mb-2">🍽️</div>
+                    <p class="small mb-0">Detail menu tidak tersedia.</p>
+                </div>
+                {% endif %}
+
+                <!-- Total -->
+                <div class="price-total-row">
+                    <div class="fw-700" style="color:var(--text-mid);">Total Pembayaran</div>
+                    <div class="price-total-amount">Rp {{ order.total_price|floatformat:0 }}</div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ── KANAN: Info & Actions ── -->
+        <div class="col-lg-4">
+
+            <!-- Info Pengiriman -->
+            <div class="detail-card mb-4">
+                <div class="detail-card-header">
+                    <i class="fas fa-map-marker-alt text-primary-custom"></i>
+                    Info Pengiriman
+                </div>
+                <div class="drow">
+                    <span class="drow-label">Penerima</span>
+                    <span class="drow-value">{{ order.customer_name }}</span>
+                </div>
+                <div class="drow">
+                    <span class="drow-label">No. HP</span>
+                    <span class="drow-value">{{ order.customer_phone }}</span>
+                </div>
+                <div class="drow">
+                    <span class="drow-label">Alamat</span>
+                    <span class="drow-value">{{ order.customer_address }}</span>
+                </div>
+                <div class="drow">
+                    <span class="drow-label">Estimasi Tiba</span>
+                    <span class="drow-value text-primary-custom fw-700">{{ order.get_estimated_delivery }}</span>
+                </div>
+                {% if order.notes %}
+                <div class="drow">
+                    <span class="drow-label">Catatan</span>
+                    <span class="drow-value">{{ order.notes }}</span>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Info Pembayaran -->
+            <div class="detail-card mb-4">
+                <div class="detail-card-header">
+                    <i class="fas fa-credit-card text-primary-custom"></i>
+                    Info Pembayaran
+                </div>
+                <div class="drow">
+                    <span class="drow-label">Metode</span>
+                    <span class="drow-value">{{ order.get_payment_method_display }}</span>
+                </div>
+                <div class="drow">
+                    <span class="drow-label">Total</span>
+                    <span class="drow-value text-primary-custom">Rp {{ order.total_price|floatformat:0 }}</span>
+                </div>
+                {% if order.referral_code %}
+                <div class="drow">
+                    <span class="drow-label">Kode Promo</span>
+                    <span class="drow-value">
+                        <span class="badge-warm">{{ order.referral_code }}</span>
+                    </span>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Timeline Riwayat Perubahan Status -->
+            <div class="detail-card mb-4">
+                <div class="detail-card-header">
+                    <i class="fas fa-history text-primary-custom"></i>
+                    Riwayat Perubahan Status
+                </div>
+                <div class="p-3 ps-4" style="margin-left: 20px; border-left: 2px solid var(--cream-dark);">
+                    {% for history in order.status_history.all %}
+                    <div class="mb-3 position-relative">
+                        <div class="position-absolute" style="left: -29px; top: 4px; width: 10px; height: 10px; border-radius: 50%; background: {% if forloop.first %}var(--primary){% else %}var(--text-light){% endif %}; border: 2px solid white;"></div>
+                        <div class="small fw-700 {% if forloop.first %}text-primary-custom{% endif %}">{{ history.get_status_display }}</div>
+                        <div class="text-faint" style="font-size: .75rem;">{{ history.changed_at|date:"d M Y, H:i" }} WIB</div>
+                        {% if history.notes %}
+                        <div class="text-secondary small mt-1" style="font-size: .8rem;">{{ history.notes }}</div>
+                        {% endif %}
+                    </div>
+                    {% empty %}
+                    <div class="text-muted small">Belum ada riwayat status.</div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Aksi -->
+            <div class="d-grid gap-2">
+                <a href="{% url 'track_order' %}?code={{ order.order_code }}"
+                   class="btn btn-primary py-3">
+                    <i class="fas fa-search-location me-2"></i>Lacak Pesanan
+                </a>
+                <a href="https://wa.me/62895331091739?text=Halo%2C%20saya%20ingin%20menanyakan%20pesanan%20{{ order.order_code }}"
+                   target="_blank" class="btn btn-wa py-3">
+                    <i class="fab fa-whatsapp me-2"></i>Tanya via WhatsApp
+                </a>
+                <a href="{% url 'home' %}" class="btn btn-outline-primary py-3">
+                    <i class="fas fa-home me-2"></i>Kembali ke Home
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="copy-toast" id="copyToast">✅ Kode berhasil disalin!</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function copyCode(code) {
+    const doToast = () => {
+        const t = document.getElementById('copyToast');
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 2200);
+    };
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(code).then(doToast);
+    } else {
+        const el = document.createElement('textarea');
+        el.value = code; document.body.appendChild(el);
+        el.select(); document.execCommand('copy');
+        document.body.removeChild(el); doToast();
+    }
+}
+
+window.addEventListener('load', () => {
+    const fill = document.getElementById('progressFill');
+    if (fill) {
+        const target = fill.style.width;
+        fill.style.width = '0%';
+        setTimeout(() => { fill.style.width = target; }, 400);
+    }
+});
+</script>
+{% endblock %}

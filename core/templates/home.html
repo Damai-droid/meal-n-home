@@ -1,0 +1,959 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Meal N Home — Meal Kit Lezat ke Pintu Anda{% endblock %}
+
+{% block extra_css %}
+<style>
+/* ── HERO ── */
+.hero-section {
+    background: linear-gradient(135deg, var(--cream) 0%, var(--cream-dark) 100%);
+    padding: 90px 0 80px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Blob dekorasi kiri bawah */
+.hero-blob-1 {
+    position: absolute;
+    bottom: -80px; left: -80px;
+    width: 360px; height: 360px;
+    background: radial-gradient(circle, rgba(212,85,42,.12) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+}
+/* Blob dekorasi kanan atas */
+.hero-blob-2 {
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 420px; height: 420px;
+    background: radial-gradient(circle, rgba(242,160,101,.14) 0%, transparent 65%);
+    border-radius: 50%;
+    pointer-events: none;
+}
+/* Blob dekorasi tengah */
+.hero-blob-3 {
+    position: absolute;
+    top: 40%; left: 35%;
+    width: 280px; height: 280px;
+    background: radial-gradient(circle, rgba(212,85,42,.06) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+}
+/* Titik-titik dekoratif */
+.hero-dots {
+    position: absolute;
+    bottom: 48px; left: 42%;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    pointer-events: none;
+    opacity: .3;
+}
+.hero-dots span {
+    width: 6px; height: 6px;
+    background: var(--primary);
+    border-radius: 50%;
+    display: block;
+}
+
+.hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #fff;
+    border: 1px solid rgba(212,85,42,.2);
+    color: var(--primary);
+    padding: 6px 18px;
+    border-radius: 50px;
+    font-size: .78rem;
+    font-weight: 700;
+    box-shadow: 0 4px 16px rgba(212,85,42,.1);
+}
+.hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.2rem, 4.5vw, 3.6rem);
+    line-height: 1.15;
+    color: var(--text-dark);
+}
+.hero-title span { color: var(--primary); }
+.hero-stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: var(--primary);
+    line-height: 1;
+}
+.hero-stat-label { font-size: .75rem; color: var(--text-light); margin-top: 3px; font-weight: 500; }
+
+/* ── HERO FOOD IMAGE ── */
+.hero-food-wrap {
+    position: relative;
+    padding: 20px 20px 20px 0;
+}
+.hero-food-img {
+    width: 100%;
+    height: 460px;
+    object-fit: cover;
+    border-radius: 32px 32px 100px 32px;
+    box-shadow: 0 24px 64px rgba(212,85,42,.22);
+    display: block;
+}
+/* Lingkaran dashed berputar di belakang foto */
+.hero-food-circle {
+    position: absolute;
+    top: 0; right: 0;
+    width: 180px; height: 180px;
+    border: 3px dashed rgba(212,85,42,.22);
+    border-radius: 50%;
+    pointer-events: none;
+    animation: spin 18s linear infinite;
+}
+.hero-food-circle-2 {
+    position: absolute;
+    bottom: 10px; left: -10px;
+    width: 120px; height: 120px;
+    border: 2px dashed rgba(242,160,101,.3);
+    border-radius: 50%;
+    pointer-events: none;
+    animation: spin 12s linear infinite reverse;
+}
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+/* Floating cards di atas foto */
+.hero-float-card {
+    position: absolute;
+    background: #fff;
+    border-radius: 16px;
+    padding: 12px 16px;
+    box-shadow: 0 8px 32px rgba(212,85,42,.18);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: .82rem;
+    font-weight: 700;
+    white-space: nowrap;
+    animation: floatUpDown 3s ease-in-out infinite;
+    z-index: 2;
+}
+.hero-float-card.card-top {
+    top: 32px; left: -20px;
+}
+.hero-float-card.card-bottom {
+    bottom: 40px; right: -10px;
+    animation-delay: 1.5s;
+}
+@keyframes floatUpDown {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-8px); }
+}
+.float-icon {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+/* ── FILTER CHIPS ── */
+.filter-chip {
+    display: inline-block;
+    background: #fff;
+    border: 1.5px solid var(--cream-dark);
+    color: var(--text-mid);
+    padding: 7px 18px;
+    border-radius: 50px;
+    font-size: .82rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all .2s;
+    white-space: nowrap;
+}
+.filter-chip:hover, .filter-chip.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+}
+
+/* ── SUBSCRIPTION PLANS ── */
+.plan-card {
+    background: rgba(255,255,255,.07);
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 16px;
+    padding: 32px;
+    color: #fff;
+    transition: all .3s;
+    position: relative;
+    height: 100%;
+}
+.plan-card:hover {
+    background: rgba(255,255,255,.12);
+    transform: translateY(-4px);
+}
+.plan-card.popular {
+    border-color: var(--warm);
+    background: rgba(242,160,101,.1);
+}
+.plan-popular-badge {
+    position: absolute;
+    top: -13px; left: 50%;
+    transform: translateX(-50%);
+    background: var(--warm);
+    color: var(--text-dark);
+    font-size: .68rem;
+    font-weight: 800;
+    padding: 4px 16px;
+    border-radius: 50px;
+    white-space: nowrap;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+}
+
+/* ── TIER CARDS ── */
+.tier-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 28px 20px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(212,85,42,.08);
+    transition: transform .25s;
+}
+.tier-card:hover { transform: translateY(-4px); }
+
+/* ── ADDON CARD ── */
+.addon-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px 16px;
+    text-align: center;
+    box-shadow: 0 4px 16px rgba(212,85,42,.07);
+    transition: all .25s;
+    border: 2px solid transparent;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+.addon-card:hover {
+    border-color: var(--primary);
+    transform: translateY(-3px);
+    color: inherit;
+}
+
+/* ── BUNDLE ── */
+.bundle-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 26px;
+    border-left: 4px solid var(--primary);
+    box-shadow: 0 4px 20px rgba(212,85,42,.08);
+    transition: all .3s;
+    height: 100%;
+}
+.bundle-card:hover { transform: translateY(-4px); box-shadow: 0 14px 40px rgba(212,85,42,.15); }
+
+/* ── STEP CARD ── */
+.step-num {
+    width: 50px; height: 50px;
+    background: var(--primary);
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    font-weight: 900;
+    margin: 0 auto 14px;
+}
+
+/* ── CTA STRIP ── */
+.cta-strip {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+}
+
+/* ── REFERRAL BOX ── */
+.referral-box {
+    background: var(--primary);
+    border-radius: 16px;
+    position: relative;
+    overflow: hidden;
+}
+.referral-box::before {
+    content: '🎁';
+    position: absolute;
+    font-size: 9rem;
+    right: -20px; top: -20px;
+    opacity: .1;
+    pointer-events: none;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- ══ HERO ══ -->
+<section class="hero-section">
+
+    <!-- Blob dekorasi background -->
+    <div class="hero-blob-1"></div>
+    <div class="hero-blob-2"></div>
+    <div class="hero-blob-3"></div>
+
+    <!-- Titik-titik dekoratif -->
+    <div class="hero-dots">
+        {% for i in "12345678910111213141516171819202122232425" %}
+        <span></span>
+        {% endfor %}
+    </div>
+
+    <div class="container position-relative" style="z-index:1;">
+        <div class="row align-items-center g-5">
+
+            <!-- ── Teks Kiri ── -->
+            <div class="col-lg-6">
+                <div class="hero-badge mb-3">
+                    <span>✨</span><span>MEAL KIT PREMIUM #1 BATAM</span>
+                </div>
+                <h1 class="hero-title mb-3">
+                    Masakan Lezat<br>
+                    <span>Langsung ke</span><br>
+                    Pintu Rumahmu
+                </h1>
+                <p class="text-faint lh-lg mb-4" style="font-size:1.02rem;">
+                    Meal kit segar & bergizi, diracik chef berpengalaman dengan bahan-bahan pilihan berkualitas. Mudah dimasak, lezat disantap, sehat untuk keluarga.
+                </p>
+                <div class="d-flex flex-wrap gap-2 mb-5">
+                    <a href="{% url 'menu' %}" class="btn btn-primary px-4">
+                        <i class="fas fa-utensils me-2"></i>Lihat Menu
+                    </a>
+                    <a href="#subscription" class="btn btn-outline-primary px-4">
+                        <i class="fas fa-sync me-2"></i>Langganan
+                    </a>
+                </div>
+                <!-- Stats -->
+                <div class="row g-4 pt-2">
+                    <div class="col-4 text-center">
+                        <div class="hero-stat-num">{% if total_orders > 0 %}{{ total_orders }}+{% else %}500+{% endif %}</div>
+                        <div class="hero-stat-label">Pesanan Sukses</div>
+                    </div>
+                    <div class="col-4 text-center">
+                        <div class="hero-stat-num">{% if total_menus > 0 %}{{ total_menus }}+{% else %}30+{% endif %}</div>
+                        <div class="hero-stat-label">Pilihan Menu</div>
+                    </div>
+                    <div class="col-4 text-center">
+                        <div class="hero-stat-num">4.9⭐</div>
+                        <div class="hero-stat-label">Rating</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── Foto Makanan Kanan ── -->
+            <div class="col-lg-6 d-none d-lg-block">
+                <div class="hero-food-wrap">
+
+                    <!-- Lingkaran berputar dekoratif -->
+                    <div class="hero-food-circle"></div>
+                    <div class="hero-food-circle-2"></div>
+
+                    <!-- Foto makanan dari file lokal -->
+                    <img src="{% static 'img/mealnhomefoto.png' %}"
+                         alt="Makanan Lezat Meal N Home"
+                         class="hero-food-img">
+
+                    <!-- Floating card atas kiri — Menu Terlaris -->
+                    <div class="hero-float-card card-top">
+                        <div class="float-icon" style="background:var(--primary);">🍛</div>
+                        <div>
+                            <div style="font-size:.72rem;color:var(--text-light);font-weight:500;">Menu Terlaris</div>
+                            <div style="color:var(--primary);">Paket Nusantara</div>
+                        </div>
+                    </div>
+
+                    <!-- Floating card bawah kanan — Rating -->
+                    <div class="hero-float-card card-bottom">
+                        <div class="float-icon" style="background:#f5a623;">⭐</div>
+                        <div>
+                            <div style="font-size:.72rem;color:var(--text-light);font-weight:500;">Rating Pelanggan</div>
+                            <div style="color:var(--text-dark);">4.9 / 5.0 · 500+ review</div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- ══ SEASONAL CAMPAIGN BANNER ══ -->
+{% if active_campaign %}
+<div class="bg-primary-custom py-4 px-3">
+    <div class="container">
+        <div class="d-flex flex-column flex-md-row align-items-center justify-content-between gap-3">
+            <div class="text-white">
+                <h5 class="fw-bold mb-1 font-playfair">🎉 {{ active_campaign.title }}</h5>
+                <p class="mb-0 opacity-75 small">{{ active_campaign.description }}</p>
+            </div>
+            <div class="text-center text-md-end flex-shrink-0">
+                <div class="display-6 fw-900 text-white lh-1">{{ active_campaign.discount_percent }}%</div>
+                <div class="text-white opacity-75 small mb-2">DISKON SPESIAL</div>
+                <a href="{% url 'menu' %}" class="btn btn-light btn-sm fw-700 px-4" style="border-radius:50px;">Pesan Sekarang</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- ══ HOW IT WORKS ══ -->
+<section class="py-5">
+    <div class="container py-3">
+        <div class="text-center mb-5">
+            <div class="section-label mb-2">🚀 Cara Kerja</div>
+            <h2 class="font-playfair fw-700" style="color:var(--text-dark);">Mudah dalam 4 Langkah</h2>
+        </div>
+        <div class="row g-4 text-center">
+            {% for step_num, step_icon, step_title, step_desc in steps_data %}{% empty %}
+            {% for item in "1234" %}
+            <div class="col-6 col-md-3">
+                <div class="step-num">{{ forloop.counter }}</div>
+                <div style="font-size:2rem;" class="mb-2">
+                    {% if forloop.counter == 1 %}📱{% elif forloop.counter == 2 %}✅{% elif forloop.counter == 3 %}📦{% else %}🏠{% endif %}
+                </div>
+                <h6 class="fw-700">
+                    {% if forloop.counter == 1 %}Pilih Menu{% elif forloop.counter == 2 %}Pesan & Bayar{% elif forloop.counter == 3 %}Dikemas Segar{% else %}Terima di Rumah{% endif %}
+                </h6>
+                <p class="text-faint small lh-lg">
+                    {% if forloop.counter == 1 %}Browse menu dan sesuaikan dengan selera keluarga Anda.
+                    {% elif forloop.counter == 2 %}Konfirmasi pesanan dan bayar via transfer, e-wallet, atau QRIS.
+                    {% elif forloop.counter == 3 %}Bahan segar dikemas rapi lengkap dengan panduan memasak.
+                    {% else %}Dikirim ke pintu rumah Anda dalam kondisi segar & terjaga.{% endif %}
+                </p>
+            </div>
+            {% endfor %}
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- ══ FEATURED PRODUCTS — DYNAMIC GRID ══ -->
+<section class="py-5" style="background:#fff;">
+    <div class="container py-3">
+        <div class="d-flex flex-wrap align-items-end justify-content-between gap-3 mb-3">
+            <div>
+                <div class="section-label mb-2">🍽️ Menu Unggulan</div>
+                <h2 class="font-playfair fw-700 mb-0" style="color:var(--text-dark);">Pilihan Menu Terpopuler</h2>
+            </div>
+            <a href="{% url 'menu' %}" class="btn btn-outline-primary">
+                Lihat Semua <i class="fas fa-arrow-right ms-1"></i>
+            </a>
+        </div>
+
+        <!-- Filter Chips -->
+        <div class="d-flex flex-wrap gap-2 mb-4">
+            <a href="{% url 'menu' %}" class="filter-chip active">Semua</a>
+            <a href="{% url 'menu' %}?portion=solo" class="filter-chip">👤 Solo</a>
+            <a href="{% url 'menu' %}?portion=duo" class="filter-chip">👫 Duo</a>
+            <a href="{% url 'menu' %}?portion=family" class="filter-chip">👨‍👩‍👧 Family</a>
+        </div>
+
+        <!-- Product Grid -->
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
+            {% for product in featured_products %}
+            <div class="col">
+                <div class="card h-100 position-relative">
+                    {% if product.is_featured %}
+                    <span class="position-absolute top-0 end-0 m-2 badge bg-primary rounded-pill" style="z-index: 3;">⭐ Featured</span>
+                    {% endif %}
+                    <div class="card-img-wrap">
+                        {% if product.image %}
+                        <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+                        {% else %}
+                        <div class="card-placeholder">🍽️</div>
+                        {% endif %}
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <div class="badge-warm mb-2" style="display:inline-block;width:fit-content;">
+                            {{ product.get_portion_display }}
+                            {% if product.category %} · {{ product.category.name }}{% endif %}
+                        </div>
+                        <h5 class="font-playfair fw-700 mb-1" style="font-size:1.15rem; color: var(--text-dark);">{{ product.name }}</h5>
+                        <p class="text-faint small lh-lg flex-grow-1 mb-3">{{ product.description|truncatechars:80 }}</p>
+                        <div class="d-flex align-items-center justify-content-between mt-auto">
+                            <div class="product-price">
+                                Rp {{ product.price|floatformat:0 }}
+                                <span class="text-faint fw-400" style="font-size:.72rem;">/porsi</span>
+                            </div>
+                            <a href="{% url 'checkout' %}?product={{ product.id }}" class="btn btn-primary btn-sm px-3">
+                                <i class="fas fa-cart-plus me-1"></i>Pesan
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            {% for i in "12345" %}
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-img-wrap">
+                        <div class="card-placeholder">🍛</div>
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <div class="badge-warm mb-2" style="display:inline-block;width:fit-content;">Family · 4 Orang</div>
+                        <h5 class="font-playfair fw-700 mb-1" style="font-size:1.15rem; color: var(--text-dark);">Paket Nusantara Spesial</h5>
+                        <p class="text-faint small lh-lg flex-grow-1 mb-3">Nikmati cita rasa masakan Nusantara dengan bahan segar pilihan chef berpengalaman.</p>
+                        <div class="d-flex align-items-center justify-content-between mt-auto">
+                            <div class="product-price">Rp 185.000</div>
+                            <a href="{% url 'checkout' %}" class="btn btn-primary btn-sm px-3">
+                                <i class="fas fa-cart-plus me-1"></i>Pesan
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- ══ SUBSCRIPTION PLANS — Strategy 1 ══ -->
+<section class="py-5 bg-dark-brown" id="subscription">
+    <div class="container py-3">
+       
+        <h2 class="font-playfair fw-700 text-white mb-2">Subscription Meal Plan</h2>
+        <p class="mb-5" style="color:rgba(255,255,255,.6);max-width:540px;">Langganan dan hemat lebih banyak! Dapatkan meal kit segar setiap minggu tanpa repot pesan ulang.</p>
+
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for plan in subscription_plans %}
+            <div class="col">
+                <div class="plan-card {% if plan.is_popular %}popular{% endif %}">
+                    {% if plan.is_popular %}<div class="plan-popular-badge">⭐ PALING POPULER</div>{% endif %}
+                    <h5 class="text-warm font-playfair fw-700 mb-1">{{ plan.name }}</h5>
+                    <div class="small opacity-50 text-uppercase mb-3" style="letter-spacing:.06em;">{{ plan.get_duration_display }}</div>
+                    <div class="d-flex align-items-baseline gap-2 mb-1">
+                        <span class="fw-800 fs-3">Rp {{ plan.price|floatformat:0 }}</span>
+                        <span class="small opacity-50">/periode</span>
+                    </div>
+                    <div class="small opacity-40 text-decoration-line-through mb-1">Rp {{ plan.original_price|floatformat:0 }}</div>
+                    <span class="badge bg-primary rounded-pill mb-3">Hemat {{ plan.discount_percent }}%</span>
+                    <ul class="list-unstyled mb-4">
+                        <li class="mb-2 small opacity-80"><i class="fas fa-check text-warm me-2"></i>{{ plan.deliveries_per_week }}x pengiriman/minggu</li>
+                        <li class="mb-2 small opacity-80"><i class="fas fa-check text-warm me-2"></i>Bahan premium segar</li>
+                        <li class="mb-2 small opacity-80"><i class="fas fa-check text-warm me-2"></i>Panduan memasak inklusif</li>
+                        <li class="mb-2 small opacity-80"><i class="fas fa-check text-warm me-2"></i>Gratis ongkos kirim</li>
+                        <li class="mb-2 small opacity-80"><i class="fas fa-check text-warm me-2"></i>Poin loyalty double</li>
+                    </ul>
+                    <a href="{% url 'configure_subscription' plan.id %}"
+                       class="btn w-100 {% if plan.is_popular %}btn-primary{% else %}btn-outline-light{% endif %}">
+                        Mulai Langganan
+                    </a>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col">
+                <div class="plan-card">
+                    <h5 class="text-warm font-playfair fw-700 mb-1">Paket Mingguan</h5>
+                    <div class="small opacity-50 text-uppercase mb-3" style="letter-spacing:.06em;">Mingguan</div>
+                    <div class="d-flex align-items-baseline gap-2 mb-1"><span class="fw-800 fs-3">Rp 250.000</span><span class="small opacity-50">/periode</span></div>
+                    <div class="small opacity-40 text-decoration-line-through mb-1">Rp 280.000</div>
+                    <span class="badge bg-primary rounded-pill mb-3">Hemat 11%</span>
+                    <ul class="list-unstyled mb-4">
+                        <li class="mb-2 small opacity-80"><i class="fas fa-check text-warm me-2"></i>3x pengiriman/minggu</li>
+                        <li class="mb-2 small opacity-80"><i class="fas fa-check text-warm me-2"></i>Bahan premium segar</li>
+                        <li class="mb-2 small opacity-80"><i class="fas fa-check text-warm me-2"></i>Panduan memasak</li>
+                    </ul>
+                    <a href="{% url 'checkout' %}" class="btn w-100 btn-outline-light">Mulai Langganan</a>
+                </div>
+            </div>
+            <div class="col">
+                <div class="plan-card popular">
+                    <div class="plan-popular-badge">⭐ PALING POPULER</div>
+                    <h5 class="text-warm font-playfair fw-700 mb-1">Paket Bulanan</h5>
+                    <div class="small opacity-50 text-uppercase mb-3" style="letter-spacing:.06em;">Bulanan</div>
+                    <div class="d-flex align-items-baseline gap-2 mb-1"><span class="fw-800 fs-3">Rp 850.000</span><span class="small opacity-50">/periode</span></div>
+                    <div class="small opacity-40 text-decoration-line-through mb-1">Rp 1.120.000</div>
+                    <span class="badge bg-primary rounded-pill mb-3">Hemat 24%</span>
+                    <ul class="list-unstyled mb-4">
+                        <li class="mb-2 small opacity-80"><i class="fas fa-check text-warm me-2"></i>3x pengiriman/minggu</li>
+                        <li class="mb-2 small opacity-80"><i class="fas fa-check text-warm me-2"></i>Bahan premium segar</li>
+                        <li class="mb-2 small opacity-80"><i class="fas fa-check text-warm me-2"></i>Panduan memasak</li>
+                        <li class="mb-2 small opacity-80"><i class="fas fa-check text-warm me-2"></i>Gratis ongkir</li>
+                        <li class="mb-2 small opacity-80"><i class="fas fa-check text-warm me-2"></i>Poin loyalty double</li>
+                    </ul>
+                    <a href="{% url 'checkout' %}" class="btn w-100 btn-primary">Mulai Langganan</a>
+                </div>
+            </div>
+            <div class="col">
+                <div class="plan-card">
+                    <h5 class="text-warm font-playfair fw-700 mb-1">Paket 3 Bulan</h5>
+                    <div class="small opacity-50 text-uppercase mb-3" style="letter-spacing:.06em;">Tiga Bulanan</div>
+                    <div class="d-flex align-items-baseline gap-2 mb-1"><span class="fw-800 fs-3">Rp 2.250.000</span><span class="small opacity-50">/periode</span></div>
+                    <div class="small opacity-40 text-decoration-line-through mb-1">Rp 3.360.000</div>
+                    <span class="badge bg-primary rounded-pill mb-3">Hemat 33%</span>
+                    <ul class="list-unstyled mb-4">
+                        <li class="mb-2 small opacity-80"><i class="fas fa-check text-warm me-2"></i>3x pengiriman/minggu</li>
+                        <li class="mb-2 small opacity-80"><i class="fas fa-check text-warm me-2"></i>Bahan premium segar</li>
+                        <li class="mb-2 small opacity-80"><i class="fas fa-check text-warm me-2"></i>Panduan memasak</li>
+                        <li class="mb-2 small opacity-80"><i class="fas fa-check text-warm me-2"></i>Gratis ongkir selamanya</li>
+                        <li class="mb-2 small opacity-80"><i class="fas fa-check text-warm me-2"></i>Poin loyalty triple</li>
+                    </ul>
+                    <a href="{% url 'checkout' %}" class="btn w-100 btn-outline-light">Mulai Langganan</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- ══ ADD-ON UPSELLING — Strategy 2 ══ -->
+<section class="py-5">
+    <div class="container py-3">
+        <h2 class="font-playfair fw-700 mb-2" style="color:var(--text-dark);">Add-On & Upselling</h2>
+        <p class="text-faint mb-4" style="max-width:520px;">Lengkapi meal kit Anda dengan tambahan pilihan terbaik untuk pengalaman makan yang lebih sempurna.</p>
+
+        <div class="row row-cols-2 row-cols-sm-3 row-cols-md-6 g-3">
+            {% for addon in addons %}
+            <div class="col">
+                <a href="{% url 'checkout' %}" class="addon-card">
+                    <div style="font-size:2rem;" class="mb-2">{{ addon.icon }}</div>
+                    <div class="fw-700 small mb-1">{{ addon.name }}</div>
+                    <div class="text-primary-custom fw-700 small">+Rp {{ addon.price|floatformat:0 }}</div>
+                </a>
+            </div>
+            {% empty %}
+            {% for item in "123456" %}
+            <div class="col">
+                <a href="{% url 'checkout' %}" class="addon-card">
+                    <div style="font-size:2rem;" class="mb-2">
+                        {% if forloop.counter == 1 %}🥤{% elif forloop.counter == 2 %}🍰{% elif forloop.counter == 3 %}🥗{% elif forloop.counter == 4 %}🌶️{% elif forloop.counter == 5 %}🍳{% else %}🧀{% endif %}
+                    </div>
+                    <div class="fw-700 small mb-1">
+                        {% if forloop.counter == 1 %}Minuman Segar{% elif forloop.counter == 2 %}Dessert Box{% elif forloop.counter == 3 %}Extra Salad{% elif forloop.counter == 4 %}Bumbu Extra{% elif forloop.counter == 5 %}Telur Kampung{% else %}Topping Premium{% endif %}
+                    </div>
+                    <div class="text-primary-custom fw-700 small">
+                        {% if forloop.counter == 1 %}+Rp 25.000{% elif forloop.counter == 2 %}+Rp 35.000{% elif forloop.counter == 3 %}+Rp 20.000{% elif forloop.counter == 4 %}+Rp 15.000{% elif forloop.counter == 5 %}+Rp 18.000{% else %}+Rp 28.000{% endif %}
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- ══ BUNDLE HEMAT — Strategy 3 ══ -->
+<section class="py-5 bg-cream-dark" id="bundle">
+    <div class="container py-3">
+
+        <h2 class="font-playfair fw-700 mb-2" style="color:var(--text-dark);">Bundling Menu Hemat</h2>
+        <p class="text-faint mb-4" style="max-width:520px;">Kombinasi menu terbaik dengan harga lebih hemat. Sempurna untuk keluarga dan momen spesial!</p>
+
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for bundle in bundles %}
+            <div class="col">
+                <div class="bundle-card">
+                    <h5 class="font-playfair fw-700 mb-2">📦 {{ bundle.name }}</h5>
+                    <p class="text-faint small lh-lg mb-3">{{ bundle.description }}</p>
+                    <div class="d-flex align-items-center justify-content-between mt-auto">
+                        <span class="product-price">Rp {{ bundle.bundle_price|floatformat:0 }}</span>
+                        <a href="{% url 'checkout' %}?bundle={{ bundle.id }}" class="btn btn-primary btn-sm px-3">Ambil Paket</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col">
+                <div class="bundle-card">
+                    <h5 class="font-playfair fw-700 mb-2">📦 Paket Sarapan Sehat</h5>
+                    <p class="text-faint small lh-lg mb-3">3 menu sarapan + 1 minuman segar untuk seminggu penuh. Hemat hingga Rp 45.000!</p>
+                    <div class="d-flex align-items-center justify-content-between">
+                        <span class="product-price">Rp 195.000</span>
+                        <a href="{% url 'checkout' %}" class="btn btn-primary btn-sm px-3">Ambil Paket</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="bundle-card">
+                    <h5 class="font-playfair fw-700 mb-2">📦 Paket Family Weekend</h5>
+                    <p class="text-faint small lh-lg mb-3">Menu makan siang & malam untuk keluarga 4 orang di akhir pekan. Hemat 20%!</p>
+                    <div class="d-flex align-items-center justify-content-between">
+                        <span class="product-price">Rp 320.000</span>
+                        <a href="{% url 'checkout' %}" class="btn btn-primary btn-sm px-3">Ambil Paket</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="bundle-card">
+                    <h5 class="font-playfair fw-700 mb-2">📦 Paket Diet & Sehat</h5>
+                    <p class="text-faint small lh-lg mb-3">5 menu rendah kalori pilihan ahli gizi untuk mendukung gaya hidup sehat Anda.</p>
+                    <div class="d-flex align-items-center justify-content-between">
+                        <span class="product-price">Rp 275.000</span>
+                        <a href="{% url 'checkout' %}" class="btn btn-primary btn-sm px-3">Ambil Paket</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- ══ TIERED PRICING — Strategy 4 ══ -->
+<section class="py-5" style="background:#fff;">
+    <div class="container py-3">
+       
+        <h2 class="font-playfair fw-700 mb-2" style="color:var(--text-dark);">Tersedia Porsi</h2>
+        <p class="text-faint mb-4" style="max-width:520px;">Pilih porsi sesuai kebutuhanmu — dari solo hingga pesta besar, semua tersedia!</p>
+
+        <div class="row row-cols-2 row-cols-md-4 g-3">
+            <div class="col">
+                <div class="card text-center p-4 h-100">
+                    <div style="font-size:2.5rem;" class="mb-3">👤</div>
+                    <h6 class="font-playfair fw-700 mb-1">Solo</h6>
+                    <p class="text-faint small mb-3">1 orang · porsi pas</p>
+                    <div class="product-price mb-3">Mulai Rp 45k</div>
+                    <a href="{% url 'menu' %}?portion=solo" class="btn btn-outline-primary btn-sm">Pilih Menu</a>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card text-center p-4 h-100">
+                    <div style="font-size:2.5rem;" class="mb-3">👫</div>
+                    <h6 class="font-playfair fw-700 mb-1">Duo</h6>
+                    <p class="text-faint small mb-3">2 orang · hemat 10%</p>
+                    <div class="product-price mb-3">Mulai Rp 85k</div>
+                    <a href="{% url 'menu' %}?portion=duo" class="btn btn-outline-primary btn-sm">Pilih Menu</a>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card text-center p-4 h-100 bg-primary-custom text-white" style="transform:scale(1.03);">
+                    <div style="font-size:2.5rem;" class="mb-3">👨‍👩‍👧</div>
+                    <h6 class="font-playfair fw-700 mb-1 text-white">Family</h6>
+                    <p class="small mb-3 opacity-75">4 orang · hemat 20%</p>
+                    <div class="fw-800 fs-5 mb-3">Mulai Rp 155k</div>
+                    <a href="{% url 'menu' %}?portion=family" class="btn btn-light btn-sm fw-700" style="border-radius:50px;color:var(--primary);">Pilih Menu</a>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card text-center p-4 h-100">
+                    <div style="font-size:2.5rem;" class="mb-3">🎉</div>
+                    <h6 class="font-playfair fw-700 mb-1">Party</h6>
+                    <p class="text-faint small mb-3">8+ orang · hemat 30%</p>
+                    <div class="product-price mb-3">Mulai Rp 280k</div>
+                    <a href="{% url 'menu' %}?portion=party" class="btn btn-outline-primary btn-sm">Pilih Menu</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ══ LOYALTY & REWARD — Strategy 5 ══ -->
+<section class="py-5 bg-cream-dark">
+    <div class="container py-3">
+   
+        <h2 class="font-playfair fw-700 mb-2" style="color:var(--text-dark);">Reward Program</h2>
+        <p class="text-faint mb-4" style="max-width:520px;">Setiap pembelian = poin reward. Kumpulkan poin, naik tier, nikmati benefit lebih besar!</p>
+
+        <div class="row row-cols-2 row-cols-md-4 g-3 mb-4">
+            <div class="col">
+                <div class="tier-card" style="border-top:3px solid #CD7F32;">
+                    <div style="font-size:2.2rem;" class="mb-2">🥉</div>
+                    <h6 class="fw-700 mb-1" style="color:#CD7F32;">Bronze</h6>
+                    <p class="text-faint small mb-2">0 – 999 poin</p>
+                    <span class="fw-800" style="color:var(--primary);font-size:1.05rem;">5% cashback</span>
+                </div>
+            </div>
+            <div class="col">
+                <div class="tier-card" style="border-top:3px solid #999;">
+                    <div style="font-size:2.2rem;" class="mb-2">🥈</div>
+                    <h6 class="fw-700 mb-1" style="color:#888;">Silver</h6>
+                    <p class="text-faint small mb-2">1.000 – 4.999 poin</p>
+                    <span class="fw-800" style="color:var(--primary);font-size:1.05rem;">10% cashback</span>
+                </div>
+            </div>
+            <div class="col">
+                <div class="tier-card" style="border-top:3px solid #B8960C;">
+                    <div style="font-size:2.2rem;" class="mb-2">🥇</div>
+                    <h6 class="fw-700 mb-1" style="color:#B8960C;">Gold</h6>
+                    <p class="text-faint small mb-2">5.000 – 9.999 poin</p>
+                    <span class="fw-800" style="color:var(--primary);font-size:1.05rem;">15% cashback</span>
+                </div>
+            </div>
+            <div class="col">
+                <div class="tier-card" style="border-top:3px solid var(--primary);background:linear-gradient(135deg,#fff8f5,#fff);">
+                    <div style="font-size:2.2rem;" class="mb-2">💎</div>
+                    <h6 class="fw-700 mb-1 text-primary-custom">Platinum</h6>
+                    <p class="text-faint small mb-2">10.000+ poin</p>
+                    <span class="fw-800" style="color:var(--primary);font-size:1.05rem;">20% + free delivery</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card p-4 border-0 shadow-warm">
+            <div class="d-flex align-items-center gap-3 flex-wrap">
+                <span style="font-size:2rem;">💡</span>
+                <div class="flex-grow-1">
+                    <h6 class="fw-700 mb-1">Cara dapat poin?</h6>
+                    <p class="text-faint small mb-0">Setiap Rp 1.000 pembelian = 1 poin. Poin berlipat setiap hari Jumat & di bulan ulang tahun Anda!</p>
+                </div>
+                <a href="{% url 'checkout' %}" class="btn btn-primary btn-sm px-4">Mulai Kumpulkan Poin</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ══ REFERRAL PROGRAM — Strategy 6 ══ -->
+<section class="py-5">
+    <div class="container py-3">
+        
+        <h2 class="font-playfair fw-700 mb-4" style="color:var(--text-dark);">Program Referral</h2>
+
+        <div class="referral-box p-5 text-center text-white">
+            <h3 class="font-playfair fw-700 mb-3">Ajak Teman, Dapat Hadiah Bareng!</h3>
+            <p class="opacity-90 mb-4 mx-auto" style="max-width:480px;line-height:1.8;">
+                Bagikan kode referral unikmu. Setiap teman yang mendaftar dan pesan pertama kali, kamu dan temanmu masing-masing dapat diskon <strong>10%</strong>!
+            </p>
+            <div class="d-flex gap-3 justify-content-center flex-wrap">
+                <a href="https://wa.me/?text=Coba%20Meal%20N%20Home%20yuk!%20Pakai%20kode%20referralku:%20MEALFRIEND"
+                   target="_blank" class="btn btn-wa px-4">
+                    <i class="fab fa-whatsapp me-2"></i>Share via WhatsApp
+                </a>
+                <a href="{% url 'checkout' %}" class="btn border border-white text-white px-4 fw-700" style="border-radius:50px;background:rgba(255,255,255,.15);">
+                    <i class="fas fa-tag me-2"></i>Pakai Kode Referral
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ══ SEASONAL CAMPAIGN — Strategy 7 ══ -->
+<section class="py-5 bg-cream-dark">
+    <div class="container py-3">
+    
+        <h2 class="font-playfair fw-700 mb-2" style="color:var(--text-dark);">Kampanye Musiman</h2>
+        <p class="text-faint mb-4" style="max-width:520px;">Menu spesial & promo eksklusif hadir di momen-momen istimewa sepanjang tahun.</p>
+
+        <div class="row row-cols-2 row-cols-md-4 g-3 mb-4">
+            <div class="col">
+                <div class="rounded-4 p-4 text-white text-center" style="background:linear-gradient(135deg,#FF6B35,#F7C59F);">
+                    <div style="font-size:2.2rem;" class="mb-2">🎊</div>
+                    <h6 class="fw-700 mb-1">Promo Lebaran</h6>
+                    <p class="small opacity-85 mb-0">Paket spesial Ramadan & Eid untuk keluarga tercinta</p>
+                </div>
+            </div>
+            <div class="col">
+                <div class="rounded-4 p-4 text-white text-center" style="background:linear-gradient(135deg,#2C7744,#52B788);">
+                    <div style="font-size:2.2rem;" class="mb-2">🎄</div>
+                    <h6 class="fw-700 mb-1">Christmas Special</h6>
+                    <p class="small opacity-85 mb-0">Menu pesta Natal & Tahun Baru yang meriah & lezat</p>
+                </div>
+            </div>
+            <div class="col">
+                <div class="rounded-4 p-4 text-white text-center" style="background:linear-gradient(135deg,#E63946,#457B9D);">
+                    <div style="font-size:2.2rem;" class="mb-2">💕</div>
+                    <h6 class="fw-700 mb-1">Valentine's Day</h6>
+                    <p class="small opacity-85 mb-0">Dinner romantis untuk dua orang spesial dalam hidup Anda</p>
+                </div>
+            </div>
+            <div class="col">
+                <div class="rounded-4 p-4 text-white text-center" style="background:linear-gradient(135deg,#F4A261,#E76F51);">
+                    <div style="font-size:2.2rem;" class="mb-2">🏫</div>
+                    <h6 class="fw-700 mb-1">Back to School</h6>
+                    <p class="small opacity-85 mb-0">Bekal sehat & bergizi untuk si kecil di awal tahun ajaran</p>
+                </div>
+            </div>
+        </div>
+        <div class="text-center">
+            <a href="{% url 'menu' %}" class="btn btn-primary px-4"><i class="fas fa-star me-2"></i>Lihat Semua Promo</a>
+        </div>
+    </div>
+</section>
+
+<!-- ══ B2B PARTNERSHIP — Strategy 8 ══ -->
+<section class="py-5" style="background:#fff;">
+    <div class="container py-3">
+       
+        <h2 class="font-playfair fw-700 mb-4" style="color:var(--text-dark);">Kemitraan & B2B Sales</h2>
+
+        <div class="rounded-4 p-4 p-md-5 text-white" style="background:linear-gradient(135deg,var(--text-dark),#4A2E1A);">
+            <div class="row align-items-center g-4">
+                <div class="col-lg-8">
+                    <h4 class="font-playfair fw-700 text-warm mb-3">Partner Bisnis Meal N Home</h4>
+                    <p class="opacity-80 lh-lg mb-3">
+                        Kami membuka kerjasama dengan perusahaan, kantor, kafe, hotel, dan institusi untuk penyediaan meal kit reguler dengan harga spesial B2B. Minimum order fleksibel & kontrak menguntungkan.
+                    </p>
+                    <div class="d-flex flex-wrap gap-2">
+                        <span class="badge rounded-pill px-3 py-2" style="background:rgba(242,160,101,.15);color:var(--warm);border:1px solid rgba(242,160,101,.3);">🏢 Perkantoran</span>
+                        <span class="badge rounded-pill px-3 py-2" style="background:rgba(242,160,101,.15);color:var(--warm);border:1px solid rgba(242,160,101,.3);">🏨 Hotel & Resort</span>
+                        <span class="badge rounded-pill px-3 py-2" style="background:rgba(242,160,101,.15);color:var(--warm);border:1px solid rgba(242,160,101,.3);">🎓 Kampus & Sekolah</span>
+                        <span class="badge rounded-pill px-3 py-2" style="background:rgba(242,160,101,.15);color:var(--warm);border:1px solid rgba(242,160,101,.3);">☕ Café & Restoran</span>
+                    </div>
+                </div>
+                <div class="col-lg-4 text-lg-end text-center">
+                    <a href="{% url 'contact' %}" class="btn btn-primary px-4 mb-2">
+                        <i class="fas fa-handshake me-2"></i>Ajukan Kerjasama
+                    </a>
+                    <div class="small opacity-50 mt-2">Respon dalam 1×24 jam</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ══ PRIVATE LABEL — Strategy 9 ══ -->
+<section class="py-5 bg-cream-dark">
+    <div class="container py-3">
+     
+        <h2 class="font-playfair fw-700 mb-2" style="color:var(--text-dark);">Private Label Product Expansion</h2>
+        <p class="text-faint mb-4" style="max-width:520px;">Kembangkan lini produk sendiri — dari bumbu rahasia hingga saus eksklusif dengan merek Meal N Home.</p>
+
+        <div class="row row-cols-2 row-cols-sm-3 row-cols-md-5 g-3 mb-4">
+            {% for item in "12345" %}
+            <div class="col">
+                <div class="card p-3 text-center h-100">
+                    <div style="font-size:2.2rem;" class="mb-2">
+                        {% if forloop.counter == 1 %}🫙{% elif forloop.counter == 2 %}🍯{% elif forloop.counter == 3 %}🌿{% elif forloop.counter == 4 %}🥣{% else %}🫖{% endif %}
+                    </div>
+                    <h6 class="fw-700 small mb-1">
+                        {% if forloop.counter == 1 %}Bumbu Racik{% elif forloop.counter == 2 %}Saus Eksklusif{% elif forloop.counter == 3 %}Rempah Kering{% elif forloop.counter == 4 %}Granola & Sereal{% else %}Minuman Herbal{% endif %}
+                    </h6>
+                    <p class="text-faint" style="font-size:.75rem;line-height:1.6;">
+                        {% if forloop.counter == 1 %}Bumbu siap pakai dari resep rahasia chef.{% elif forloop.counter == 2 %}Varian saus premium eksklusif Meal N Home.{% elif forloop.counter == 3 %}Rempah nusantara berkualitas tinggi.{% elif forloop.counter == 4 %}Sehat, bebas pengawet, penuh serat.{% else %}Jamu modern berbahan rempah lokal.{% endif %}
+                    </p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center">
+            <a href="{% url 'contact' %}" class="btn btn-outline-primary px-4">
+                <i class="fas fa-envelope me-2"></i>Tanya Produk Private Label
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- ══ FINAL CTA ══ -->
+<section class="cta-strip py-5">
+    <div class="container py-3 text-center text-white">
+        <h2 class="font-playfair fw-700 mb-3" style="font-size:clamp(1.8rem,4vw,2.8rem);">
+            Siap Memulai Perjalanan Makan Sehat?
+        </h2>
+        <p class="opacity-85 mb-4 mx-auto" style="max-width:500px;line-height:1.8;font-size:1.02rem;">
+            Bergabung bersama 500+ keluarga yang sudah menikmati kemudahan Meal N Home setiap hari.
+        </p>
+        <div class="d-flex gap-3 justify-content-center flex-wrap">
+            <a href="{% url 'menu' %}" class="btn btn-light fw-700 px-4" style="border-radius:50px;color:var(--primary);">
+                <i class="fas fa-utensils me-2"></i>Lihat Semua Menu
+            </a>
+            <a href="https://wa.me/62895331091739?text=Halo%20Meal%20N%20Home!%20Saya%20mau%20pesan"
+               target="_blank"
+               class="btn border border-white text-white fw-700 px-4" style="border-radius:50px;background:rgba(255,255,255,.15);">
+                <i class="fab fa-whatsapp me-2"></i>Chat WhatsApp
+            </a>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

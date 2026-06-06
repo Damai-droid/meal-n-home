@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Meal N Home — Meal Kit Lezat ke Pintu Anda{% endblock %}</title>
+    {% load static %}
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary:       #D4552A;
+            --primary-light: #E8784F;
+            --primary-dark:  #B8431D;
+            --warm:          #F2A065;
+            --cream:         #FDF6EE;
+            --cream-dark:    #F5EAD8;
+            --text-dark:     #2A1A0E;
+            --text-mid:      #5C3D24;
+            --text-light:    #9B7353;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--cream);
+            color: var(--text-dark);
+            overflow-x: hidden;
+        }
+
+        /* Typography */
+        .font-playfair { font-family: 'Playfair Display', serif !important; }
+        .font-lilita { font-family: 'Lilita One', cursive !important; }
+
+        /* Color utilities */
+        .text-primary-custom { color: var(--primary) !important; }
+        .text-warm           { color: var(--warm) !important; }
+        .text-mid            { color: var(--text-mid) !important; }
+        .text-faint          { color: var(--text-light) !important; }
+        .bg-cream            { background-color: var(--cream) !important; }
+        .bg-cream-dark       { background-color: var(--cream-dark) !important; }
+        .bg-dark-brown       { background-color: var(--text-dark) !important; }
+        .bg-primary-custom   { background-color: var(--primary) !important; }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in-up {
+            animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        /* Bootstrap overrides */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            border: none;
+            color: #fff;
+            font-weight: 700;
+            border-radius: 50px;
+            padding: 10px 28px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 4px 14px rgba(212,85,42,.2);
+        }
+        .btn-primary:hover, .btn-primary:focus, .btn-primary:active {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%) !important;
+            color: #fff !important;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(212,85,42,.35) !important;
+        }
+        .btn-outline-primary {
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            font-weight: 700;
+            border-radius: 50px;
+            padding: 8px 26px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            background: transparent;
+        }
+        .btn-outline-primary:hover {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(212,85,42,.15);
+        }
+        .btn-wa {
+            background-color: #25D366;
+            color: #fff;
+            border-radius: 50px;
+            font-weight: 700;
+            border: none;
+            transition: all .2s;
+        }
+        .btn-wa:hover { background-color: #1da851; color: #fff; transform: translateY(-2px); box-shadow: 0 4px 14px rgba(37, 211, 102, 0.3); }
+        .btn-ig {
+            background: linear-gradient(135deg, #E1306C, #833AB4);
+            color: #fff;
+            border-radius: 50px;
+            font-weight: 700;
+            border: none;
+            transition: all .2s;
+        }
+        .btn-ig:hover { opacity: .88; color: #fff; transform: translateY(-2px); box-shadow: 0 4px 14px rgba(225, 48, 108, 0.3); }
+
+        /* Navbar */
+        .navbar {
+            background-color: rgba(253, 246, 238, 0.75) !important;
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-bottom: 1px solid rgba(212, 85, 42, 0.08);
+            transition: all 0.3s ease;
+        }
+        .navbar-brand {
+            font-family: 'Lilita One', cursive;
+            font-size: 1.4rem;
+            font-weight: 1000;
+            color: var(--primary) !important;
+            align-items: baseline;
+            transform: translateY(3px)
+        }
+        
+        .navbar-brand img { height: 40px; object-fit: contain; }
+        .nav-link {
+            font-weight: 600;
+            font-size: .88rem;
+            color: var(--text-mid) !important;
+            border-radius: 50px;
+            padding: 7px 16px !important;
+            transition: all .2s;
+        }
+        .nav-link:hover, .nav-link.active {
+            background-color: rgba(212,85,42,.06);
+        }
+        .nav-cta {
+            background-color: var(--primary) !important;
+            color: #fff !important;
+            border-radius: 50px !important;
+            padding: 8px 22px !important;
+            margin-left: 6px;
+        }
+        .nav-cta:hover {
+            background-color: var(--primary-dark) !important;
+            color: #fff !important;
+        }
+        .navbar-toggler { border: none; box-shadow: none !important; }
+
+        /* Section label pill */
+        .section-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(212,85,42,.1);
+            color: var(--primary);
+            padding: 5px 14px;
+            border-radius: 50px;
+            font-size: .72rem;
+            font-weight: 700;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+        }
+
+        /* Cards */
+        .card {
+            border: none;
+            border-radius: 24px 24px 0 24px;
+            box-shadow: 0 10px 30px rgba(212, 85, 42, 0.04);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            overflow: hidden;
+            background: #fff;
+        }
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 40px rgba(212, 85, 42, 0.12);
+        }
+        .card-img-wrap {
+            position: relative;
+            overflow: hidden;
+            border-radius: 24px 24px 0 0;
+            height: 220px;
+        }
+        .card-img-top {
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .card:hover .card-img-top {
+            transform: scale(1.06);
+        }
+        .card-placeholder {
+            height: 100%;
+            width: 100%;
+            min-height: 220px;
+            background-color: var(--cream-dark);
+            border-radius: 24px 24px 0 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5rem;
+        }
+
+        /* Product price */
+        .product-price {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        /* Form controls */
+        .form-control, .form-select {
+            border: 1.5px solid var(--cream-dark);
+            background-color: var(--cream);
+            border-radius: 10px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary);
+            background-color: #fff;
+            box-shadow: 0 0 0 3px rgba(212,85,42,.12);
+        }
+        .form-label { font-weight: 600; font-size: .85rem; color: var(--text-mid); }
+
+        /* Badges */
+        .badge-warm {
+            background-color: rgba(212,85,42,.12);
+            color: var(--primary);
+            font-size: .7rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 50px;
+        }
+
+        /* Toast */
+        .toast-fixed {
+            position: fixed;
+            top: 82px;
+            right: 20px;
+            z-index: 9999;
+            min-width: 280px;
+        }
+
+        /* Footer */
+        footer { background-color: var(--text-dark); color: var(--cream-dark); }
+        footer h6 { color: var(--warm); font-size: .75rem; letter-spacing: .1em; text-transform: uppercase; font-weight: 700; }
+        footer a { color: var(--text-light); text-decoration: none; font-size: .88rem; transition: color .2s; }
+        footer a:hover { color: var(--warm); }
+        .footer-divider { border-color: rgba(255,255,255,.08); }
+
+        /* Utility */
+        .rounded-4 { border-radius: 16px !important; }
+        .shadow-warm { box-shadow: 0 4px 24px rgba(212,85,42,.1) !important; }
+        .shadow-warm-lg { box-shadow: 0 14px 48px rgba(212,85,42,.18) !important; }
+        .border-start-primary { border-left: 4px solid var(--primary) !important; }
+    </style>
+
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+<!-- ══ NAVBAR ══ -->
+<nav class="navbar navbar-expand-lg sticky-top shadow-sm py-2">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center gap-2" href="{% url 'home' %}">
+            <img src="{% static 'img/logomealnhome.png' %}" alt="Meal N Home" onerror="this.style.display='none'">
+            MEAL N HOME
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+            <i class="fas fa-bars" style="color:var(--primary);"></i>
+        </button>
+
+        <div class="collapse navbar-collapse" id="mainNav">
+            <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1 mt-3 mt-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'home' %}">
+                        <i class="fas fa-home me-1"></i>Home
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'menu' %}active{% endif %}" href="{% url 'menu' %}">
+                        <i class="fas fa-utensils me-1"></i>Menu
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}" href="{% url 'about' %}">
+                        <i class="fas fa-info-circle me-1"></i>About
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'contact' %}active{% endif %}" href="{% url 'contact' %}">
+                        <i class="fas fa-phone me-1"></i>Kontak
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'track_order' %}active{% endif %}" href="{% url 'track_order' %}">
+                        <i class="fas fa-search-location me-1"></i>Lacak Pesanan
+                    </a>
+                </li>
+                <!-- Bell Notifikasi -->
+                <li class="nav-item dropdown" id="notificationDropdown">
+                    <a class="nav-link position-relative" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" onclick="markNotifsAsRead()" style="padding-right: 12px !important;">
+                        <i class="fas fa-bell"></i>
+                        {% if unread_notifications_count > 0 %}
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notifBadge" style="font-size: 0.55rem; padding: 2px 4px; transform: translate(-50%, -20%) !important;">
+                            {{ unread_notifications_count }}
+                        </span>
+                        {% endif %}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-warm border-0 p-2" style="width: 320px; border-radius: 16px; font-size: 0.85rem; background: var(--cream);">
+                        <li class="p-2 border-bottom fw-700" style="color: var(--text-dark); font-size: 0.9rem;">🔔 Notifikasi Pesanan</li>
+                        <div style="max-height: 250px; overflow-y: auto;">
+                            {% for notif in user_notifications %}
+                            <li>
+                                <a class="dropdown-item p-2 d-flex flex-column gap-1 border-bottom" href="{{ notif.link }}" style="white-space: normal; border-radius: 8px;">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="fw-700 text-dark" style="font-size: 0.78rem;">{{ notif.title }}</span>
+                                        <span class="text-faint" style="font-size: 0.68rem;">{{ notif.time }}</span>
+                                    </div>
+                                    <p class="mb-0 text-secondary" style="font-size: 0.74rem; line-height: 1.3;">{{ notif.message }}</p>
+                                    <div class="d-flex justify-content-between align-items-center mt-1">
+                                        <span class="text-primary-custom fw-700" style="font-size: 0.7rem; text-decoration: underline;">Lihat Detail & Lacak ›</span>
+                                        {% if notif.unread %}
+                                        <span class="spinner-grow spinner-grow-sm text-primary-custom" style="width: 6px; height: 6px;" role="status"></span>
+                                        {% endif %}
+                                    </div>
+                                </a>
+                            </li>
+                            {% empty %}
+                            <li class="p-3 text-center text-muted small">Tidak ada notifikasi pesanan.</li>
+                            {% endfor %}
+                        </div>
+                    </ul>
+                </li>
+            </ul>
+            <div class="d-flex align-items-center gap-2 mt-3 mt-lg-0 ms-lg-3">
+                {% if user.is_authenticated %}
+                <span class="small me-2">Hi, {{ user.username }}</span>
+                <a href="{% url 'logout' %}" class="btn btn-outline-primary btn-sm rounded-pill">Logout</a>
+                {% else %}
+                <a href="{% url 'login' %}" class="btn btn-outline-primary btn-sm rounded-pill">Login</a>
+                <a href="{% url 'register' %}" class="btn btn-primary btn-sm rounded-pill">Register</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- ══ DJANGO MESSAGES (Toast) ══ -->
+{% if messages %}
+<div class="toast-fixed">
+    {% for message in messages %}
+    <div class="toast show border-0 shadow-warm mb-2" role="alert" style="border-left:4px solid var(--primary)!important;border-radius:12px;">
+        <div class="d-flex align-items-center p-3">
+            <i class="fas fa-check-circle me-2" style="color:var(--primary);"></i>
+            <span class="fw-600 flex-grow-1" style="font-size:.88rem;">{{ message }}</span>
+            <button type="button" class="btn-close btn-close-sm ms-2" data-bs-dismiss="toast"></button>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<!-- ══ MAIN CONTENT ══ -->
+{% block content %}{% endblock %}
+
+<!-- ══ FOOTER ══ -->
+<footer class="pt-5 pb-3 mt-5">
+    <div class="container">
+        <div class="row g-4 pb-4 border-bottom footer-divider">
+            <div class="col-lg-4 col-md-6">
+                <div class="font-playfair fs-4 fw-bold text-warm mb-2">🍽️ Meal N Home</div>
+                <p class="text-faint small lh-lg">
+                    Meal kit segar & bergizi langsung ke pintu rumah Anda. Bahan pilihan, diracik chef berpengalaman, untuk keluarga Indonesia.
+                </p>
+                <div class="d-flex gap-2 mt-3">
+                    <a href="https://wa.me/62895331091739" target="_blank" class="btn btn-wa btn-sm px-3 py-2">
+                        <i class="fab fa-whatsapp me-1"></i>WhatsApp
+                    </a>
+                    <a href="https://www.instagram.com/meal.nhome?igsh=cjZteGN1OWp4aG1m" target="_blank" class="btn btn-ig btn-sm px-3 py-2">
+                        <i class="fab fa-instagram me-1"></i>Instagram
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-lg-2 col-md-3 col-6">
+                <h6 class="mb-3">Navigasi</h6>
+                <ul class="list-unstyled">
+                    <li class="mb-2"><a href="{% url 'home' %}">Home</a></li>
+                    <li class="mb-2"><a href="{% url 'menu' %}">Menu</a></li>
+                    <li class="mb-2"><a href="{% url 'about' %}">About</a></li>
+                    <li class="mb-2"><a href="{% url 'contact' %}">Kontak</a></li>
+                </ul>
+            </div>
+
+            <div class="col-lg-2 col-md-3 col-6">
+                <h6 class="mb-3">Layanan</h6>
+                <ul class="list-unstyled">
+                    <li class="mb-2"><a href="{% url 'menu' %}">Semua Menu</a></li>
+                    <li class="mb-2"><a href="#subscription">Langganan</a></li>
+                    <li class="mb-2"><a href="#bundle">Paket Hemat</a></li>
+                    <li class="mb-2"><a href="{% url 'contact' %}">B2B</a></li>
+                </ul>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <h6 class="mb-3">Hubungi Kami</h6>
+                <ul class="list-unstyled text-faint" style="font-size:.88rem;line-height:2.2;">
+                    <li><i class="fab fa-whatsapp me-2" style="color:#25D366;"></i>+62 895-3310-91739</li>
+                    <li><i class="fab fa-instagram me-2" style="color:#E1306C;"></i>@meal.nhome</li>
+                    <li><i class="fas fa-clock me-2 text-warm"></i>Senin–Sabtu, 08.00–20.00</li>
+                    <li><i class="fas fa-map-marker-alt me-2 text-warm"></i>Batam, Kepulauan Riau</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center pt-3"
+             style="color:var(--text-light);font-size:.8rem;">
+            <span>© 2026 Meal N Home. All rights reserved.</span>
+            <span>Made with ❤️ untuk keluarga Indonesia</span>
+        </div>
+    </div>
+</footer>
+
+<!-- Bootstrap 5 JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Auto-dismiss toasts after 4 s
+    document.querySelectorAll('.toast').forEach(el => {
+        setTimeout(() => {
+            el.style.transition = 'opacity .4s';
+            el.style.opacity = '0';
+            setTimeout(() => el.remove(), 400);
+        }, 4000);
+    });
+
+    // Mark notifications as read via AJAX
+    function markNotifsAsRead() {
+        const badge = document.getElementById('notifBadge');
+        if (!badge) return; // already read or no badge
+        
+        fetch("{% url 'mark_notifications_read' %}")
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'ok') {
+                    badge.remove();
+                }
+            })
+            .catch(err => console.error("Error marking notifications as read:", err));
+    }
+</script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

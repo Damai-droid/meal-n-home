@@ -1,0 +1,261 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Tentang Kami — Meal N Home{% endblock %}
+
+{% block extra_css %}
+<style>
+.milestone-dot {
+    width: 44px; height: 44px;
+    background: var(--primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+.milestone-line {
+    position: relative;
+    padding-left: 60px;
+    padding-bottom: 32px;
+}
+.milestone-line::before {
+    content: '';
+    position: absolute;
+    left: 22px; top: 44px;
+    width: 2px;
+    height: calc(100% - 20px);
+    background: var(--cream-dark);
+}
+.milestone-line:last-child::before { display: none; }
+.milestone-dot-wrap {
+    position: absolute;
+    left: 0; top: 0;
+}
+.value-card {
+    border-radius: 16px;
+    border-top: 3px solid var(--primary);
+    transition: transform .25s;
+}
+.value-card:hover { transform: translateY(-4px); }
+.team-card {
+    border-radius: 16px;
+    transition: transform .25s;
+}
+.team-card:hover { transform: translateY(-4px); }
+.team-avatar {
+    width: 80px; height: 80px;
+    background: var(--cream-dark);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    margin: 0 auto 14px;
+    border: 3px solid var(--primary);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<div class="py-5 text-white" style="background:linear-gradient(135deg,var(--text-dark) 0%,#4A2E1A 100%);">
+    <div class="container py-3 text-center">
+        <div class="section-label mb-3" style="background:rgba(242,160,101,.2);color:var(--warm);">🍽️ Tentang Kami</div>
+        <h1 class="font-playfair fw-700 mb-3 text-warm" style="font-size:clamp(2rem,4vw,3.2rem);">
+            Cerita di Balik<br>Setiap Hidangan
+        </h1>
+        <p class="mx-auto opacity-85 lh-lg" style="max-width:560px;font-size:1.02rem;">
+            Berawal dari dapur kecil penuh cinta, Meal N Home hadir untuk menghadirkan kemudahan memasak makanan sehat dan lezat bagi setiap keluarga Indonesia.
+        </p>
+    </div>
+</div>
+
+<!-- OUR STORY -->
+<section class="py-5">
+    <div class="container py-3">
+        <div class="row align-items-center g-5">
+            <div class="col-md-5 d-none d-md-flex align-items-center justify-content-center">
+                <div class="rounded-4 overflow-hidden shadow-warm-lg" style="width:100%;aspect-ratio:4/3;">
+                    <img src="{% static 'img/mealnhomefoto2.png' %}"
+                         alt="Dapur Meal N Home"
+                         style="width:100%;height:100%;object-fit:cover;display:block;">
+                </div>
+            </div>
+            <div class="col-md-7">
+                <div class="section-label mb-3">🌱 Kisah Kami</div>
+                <h2 class="font-playfair fw-700 mb-3" style="color:var(--text-dark);">Lahir dari Keresahan Nyata</h2>
+                <p class="text-faint lh-lg mb-3">
+                    Meal N Home lahir dari keresahan seorang ibu muda yang ingin memasak makanan sehat untuk keluarganya, tapi terkendala waktu dan sulitnya mendapatkan bahan segar berkualitas di kota besar.
+                </p>
+                <p class="text-faint lh-lg mb-3">
+                    Kami percaya bahwa makan sehat seharusnya mudah, menyenangkan, dan terjangkau. Itulah mengapa kami menghadirkan meal kit — bahan segar yang sudah dipersiapkan lengkap dengan panduan memasak simpel.
+                </p>
+                <p class="text-faint lh-lg mb-4">
+                    Sejak 2023, kami sudah melayani ratusan keluarga dan terus berkembang dengan semangat menghadirkan kebahagiaan di setiap meja makan.
+                </p>
+                <div class="row g-3 text-center">
+                    <div class="col-4">
+                        <div class="font-playfair fw-900 text-primary-custom" style="font-size:1.9rem;">500+</div>
+                        <div class="text-faint small">Keluarga Bahagia</div>
+                    </div>
+                    <div class="col-4">
+                        <div class="font-playfair fw-900 text-primary-custom" style="font-size:1.9rem;">30+</div>
+                        <div class="text-faint small">Varian Menu</div>
+                    </div>
+                    <div class="col-4">
+                        <div class="font-playfair fw-900 text-primary-custom" style="font-size:1.9rem;">4.9⭐</div>
+                        <div class="text-faint small">Rating</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- VALUES -->
+<section class="py-5 bg-cream-dark">
+    <div class="container py-3">
+        <div class="text-center mb-5">
+            <div class="section-label mb-2">💡 Nilai Kami</div>
+            <h2 class="font-playfair fw-700" style="color:var(--text-dark);">Apa yang Kami Percaya</h2>
+        </div>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+            <div class="col">
+                <div class="card value-card p-4 h-100">
+                    <div style="font-size:2.2rem;" class="mb-3">🥬</div>
+                    <h6 class="font-playfair fw-700 mb-2">Kesegaran Pertama</h6>
+                    <p class="text-faint small lh-lg mb-0">Kami hanya menggunakan bahan-bahan segar berkualitas tinggi dari petani dan supplier terpercaya, tanpa bahan pengawet berbahaya.</p>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card value-card p-4 h-100">
+                    <div style="font-size:2.2rem;" class="mb-3">❤️</div>
+                    <h6 class="font-playfair fw-700 mb-2">Dimasak dengan Cinta</h6>
+                    <p class="text-faint small lh-lg mb-0">Setiap resep dikurasi oleh chef berpengalaman dan diracik dengan penuh perhatian. Karena makanan enak berasal dari hati.</p>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card value-card p-4 h-100">
+                    <div style="font-size:2.2rem;" class="mb-3">♻️</div>
+                    <h6 class="font-playfair fw-700 mb-2">Ramah Lingkungan</h6>
+                    <p class="text-faint small lh-lg mb-0">Kemasan kami dirancang untuk meminimalkan limbah plastik. Kami berkomitmen mengurangi food waste dan mendukung keberlanjutan.</p>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card value-card p-4 h-100">
+                    <div style="font-size:2.2rem;" class="mb-3">🤝</div>
+                    <h6 class="font-playfair fw-700 mb-2">Mendukung Lokal</h6>
+                    <p class="text-faint small lh-lg mb-0">Kami bermitra langsung dengan petani lokal dan UMKM di Indonesia untuk memastikan bahan terbaik sekaligus mendukung perekonomian.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- TEAM -->
+<section class="py-5" style="background:#fff;">
+    <div class="container py-3">
+        <div class="text-center mb-5">
+            <div class="section-label mb-2">👨‍🍳 Tim Kami</div>
+            <h2 class="font-playfair fw-700" style="color:var(--text-dark);">Orang-Orang di Balik Dapur</h2>
+        </div>
+        <div class="row row-cols-2 row-cols-md-4 g-4">
+            <div class="col">
+                <div class="card team-card p-4 text-center h-100">
+                    <div class="team-avatar">👩</div>
+                    <h6 class="fw-700 mb-1">Anisa Rahmawati</h6>
+                    <div class="text-primary-custom fw-600 small mb-2">Founder & CEO</div>
+                    <p class="text-faint" style="font-size:.78rem;line-height:1.6;">Ibu dua anak passionate soal makanan sehat. Background Food Technology UGM.</p>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card team-card p-4 text-center h-100">
+                    <div class="team-avatar">👨‍🍳</div>
+                    <h6 class="fw-700 mb-1">Chef Budi Santoso</h6>
+                    <div class="text-primary-custom fw-600 small mb-2">Head Chef</div>
+                    <p class="text-faint" style="font-size:.78rem;line-height:1.6;">Chef 15 tahun di hotel bintang lima. Spesialis masakan Nusantara dan fusion modern.</p>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card team-card p-4 text-center h-100">
+                    <div class="team-avatar">👩‍💼</div>
+                    <h6 class="fw-700 mb-1">Dewi Kartika</h6>
+                    <div class="text-primary-custom fw-600 small mb-2">Operations Manager</div>
+                    <p class="text-faint" style="font-size:.78rem;line-height:1.6;">Ahli supply chain dan logistik cold-chain. Memastikan pesanan tiba segar & tepat waktu.</p>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card team-card p-4 text-center h-100">
+                    <div class="team-avatar">👨‍💻</div>
+                    <h6 class="fw-700 mb-1">Reza Firmansyah</h6>
+                    <div class="text-primary-custom fw-600 small mb-2">Product & Tech</div>
+                    <p class="text-faint" style="font-size:.78rem;line-height:1.6;">Mengembangkan platform digital agar pengalaman pesan meal kit makin mudah.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- MILESTONES -->
+<section class="py-5 bg-cream-dark">
+    <div class="container py-3">
+        <div class="row justify-content-center">
+            <div class="col-lg-7">
+                <div class="section-label mb-2">📅 Perjalanan</div>
+                <h2 class="font-playfair fw-700 mb-5" style="color:var(--text-dark);">Milestone Kami</h2>
+
+                <div class="milestone-line">
+                    <div class="milestone-dot-wrap"><div class="milestone-dot">🌱</div></div>
+                    <div class="small fw-800 text-primary-custom mb-1">2023 — Q1</div>
+                    <h6 class="fw-700 mb-1">Meal N Home Diluncurkan</h6>
+                    <p class="text-faint small mb-0">Dimulai dari dapur rumah dengan 5 menu dan 20 pelanggan pertama di Batam.</p>
+                </div>
+                <div class="milestone-line">
+                    <div class="milestone-dot-wrap"><div class="milestone-dot">🚀</div></div>
+                    <div class="small fw-800 text-primary-custom mb-1">2023 — Q3</div>
+                    <h6 class="fw-700 mb-1">Ekspansi Menu & Subscription</h6>
+                    <p class="text-faint small mb-0">Meluncurkan paket subscription bulanan dan menambah 20+ varian menu baru.</p>
+                </div>
+                <div class="milestone-line">
+                    <div class="milestone-dot-wrap"><div class="milestone-dot">🏆</div></div>
+                    <div class="small fw-800 text-primary-custom mb-1">2024 — Q1</div>
+                    <h6 class="fw-700 mb-1">500+ Pelanggan Aktif</h6>
+                    <p class="text-faint small mb-0">Melewati milestone 500 pelanggan aktif dengan rating rata-rata 4.9 bintang.</p>
+                </div>
+                <div class="milestone-line">
+                    <div class="milestone-dot-wrap"><div class="milestone-dot">🤝</div></div>
+                    <div class="small fw-800 text-primary-custom mb-1">2024 — Q3</div>
+                    <h6 class="fw-700 mb-1">Kerjasama B2B Pertama</h6>
+                    <p class="text-faint small mb-0">Menandatangani kontrak dengan 3 perusahaan untuk supply meal kit karyawan.</p>
+                </div>
+                <div class="milestone-line">
+                    <div class="milestone-dot-wrap"><div class="milestone-dot">✨</div></div>
+                    <div class="small fw-800 text-primary-custom mb-1">2025 — Sekarang</div>
+                    <h6 class="fw-700 mb-1">Terus Berkembang</h6>
+                    <p class="text-faint small mb-0">Meluncurkan private label products dan ekspansi ke kota-kota baru di Indonesia.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="py-5 text-white text-center" style="background:var(--primary);">
+    <div class="container py-3">
+        <h2 class="font-playfair fw-700 mb-3" style="font-size:clamp(1.6rem,3vw,2.4rem);">
+            Bergabunglah dengan Keluarga Besar Meal N Home
+        </h2>
+        <p class="opacity-85 mb-4 mx-auto" style="max-width:480px;">
+            Mulai perjalanan makan sehat & lezat bersama ribuan keluarga Indonesia lainnya.
+        </p>
+        <div class="d-flex gap-3 justify-content-center flex-wrap">
+            <a href="{% url 'menu' %}" class="btn btn-light fw-700 px-4" style="border-radius:50px;color:var(--primary);">Lihat Menu</a>
+            <a href="{% url 'contact' %}" class="btn border border-white text-white fw-700 px-4" style="border-radius:50px;background:rgba(255,255,255,.15);">Hubungi Kami</a>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

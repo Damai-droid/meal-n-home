@@ -1,0 +1,662 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Menu — Meal N Home{% endblock %}
+
+{% block extra_css %}
+<style>
+.filter-chip {
+    display: inline-block;
+    background: #fff;
+    border: 1.5px solid var(--cream-dark);
+    color: var(--text-mid);
+    padding: 6px 16px;
+    border-radius: 50px;
+    font-size: .82rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all .2s;
+    white-space: nowrap;
+}
+.filter-chip:hover, .filter-chip.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+}
+.sidebar-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 14px;
+    border-radius: 10px;
+    text-decoration: none;
+    color: var(--text-mid);
+    font-weight: 600;
+    font-size: .88rem;
+    transition: all .2s;
+    margin-bottom: 3px;
+}
+.sidebar-nav-link:hover, .sidebar-nav-link.active {
+    background: rgba(212,85,42,.08);
+    color: var(--primary);
+}
+.bundle-item {
+    background: #fff;
+    border-radius: 14px;
+    border-left: 4px solid var(--primary);
+    box-shadow: 0 4px 18px rgba(212,85,42,.08);
+    transition: all .2s;
+}
+.bundle-item:hover { transform: translateX(4px); }
+.addon-mini {
+    background: #fff;
+    border-radius: 10px;
+    padding: 14px 12px;
+    text-align: center;
+    box-shadow: 0 3px 12px rgba(212,85,42,.07);
+}
+.product-img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    border-radius: 24px 24px 0 0;
+}
+.addon-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #faf7f4;
+    padding: 12px 16px;
+    border-radius: 16px;
+    margin-bottom: 10px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.addon-box:hover {
+    background: #fdfaf6;
+    border-color: rgba(212, 85, 42, 0.15);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(212, 85, 42, 0.04);
+}
+.addon-box.selected {
+    background: #fff8f5;
+    border-color: #e2633a;
+    box-shadow: 0 8px 24px rgba(212, 85, 42, 0.08);
+}
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    background-color: rgba(0,0,0,.45);
+    border-radius: 50%;
+    padding: 14px;
+}
+.hero-header {
+    position: relative;
+    min-height: 260px;
+    border-bottom: 1px solid rgba(212,85,42,.1);
+    overflow: hidden;
+}
+.hero-header-bg {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.hero-header-overlay {
+    position: absolute;
+    inset: 0;
+    /* Ubah angka terakhir (0.45) untuk atur transparansi overlay:
+       0.30 = tipis (foto dominan)
+       0.45 = sedang
+       0.60 = agak tebal
+       0.75 = tebal (foto samar) */
+    background: rgba(212, 85, 42, 0.30);
+}
+.hero-header-content {
+    position: relative;
+    z-index: 2;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- ══ PAGE HEADER WITH BACKGROUND IMAGE ══ -->
+<div class="hero-header">
+
+    <!-- Background: pakai data-bg agar VS Code tidak error pada Django tag -->
+    <div class="hero-header-bg"
+         id="menuHeroBg"
+         data-bg="{% static 'img/baner1.jpeg' %}">
+    </div>
+
+    <!-- Overlay oranye semi-transparan -->
+    <div class="hero-header-overlay"></div>
+
+    <!-- Konten teks -->
+    <div class="container hero-header-content py-5">
+        <div class="section-label mb-3"
+             style="background:rgba(255,255,255,0.2);
+                    color:#fff;
+                    border:1px solid rgba(255,255,255,0.3);">
+            🍽️ Menu
+        </div>
+        <h1 class="font-playfair fw-700 mb-2 text-white">
+            Semua Menu Meal N Home
+        </h1>
+        <p class="mb-0" style="color:rgba(255,255,255,0.85); font-size:1rem;">
+            Temukan meal kit favorit Anda dari pilihan menu kami yang beragam
+        </p>
+    </div>
+</div>
+
+<!-- ══ MAIN LAYOUT ══ -->
+<div class="container py-5">
+    <div class="row g-4">
+
+        <!-- ── SIDEBAR ── -->
+        <div class="col-lg-3 col-md-4">
+            <div class="position-sticky" style="top:90px;">
+
+                <!-- Kategori -->
+                <div class="card p-3 mb-3">
+                    <h6 class="text-uppercase fw-700 mb-3"
+                        style="font-size:.72rem;letter-spacing:.1em;color:var(--text-light);">
+                        Kategori
+                    </h6>
+                    <a href="{% url 'menu' %}"
+                       class="sidebar-nav-link {% if not selected_category %}active{% endif %}">
+                        🍽️ Semua Menu
+                    </a>
+                    {% for cat in categories %}
+                    <a href="?category={{ cat.slug }}"
+                       class="sidebar-nav-link {% if selected_category == cat.slug %}active{% endif %}">
+                        {{ cat.icon }} {{ cat.name }}
+                    </a>
+                    {% endfor %}
+                </div>
+
+                <!-- Ukuran Porsi -->
+                <div class="card p-3 mb-3">
+                    <h6 class="text-uppercase fw-700 mb-3"
+                        style="font-size:.72rem;letter-spacing:.1em;color:var(--text-light);">
+                        Ukuran Porsi
+                    </h6>
+                    <a href="?portion=solo{% if selected_category %}&category={{ selected_category }}{% endif %}"
+                       class="sidebar-nav-link {% if portion_filter == 'solo' %}active{% endif %}">
+                        👤 Solo (1 orang)
+                    </a>
+                    <a href="?portion=duo{% if selected_category %}&category={{ selected_category }}{% endif %}"
+                       class="sidebar-nav-link {% if portion_filter == 'duo' %}active{% endif %}">
+                        👫 Duo (2 orang)
+                    </a>
+                    <a href="?portion=family{% if selected_category %}&category={{ selected_category }}{% endif %}"
+                       class="sidebar-nav-link {% if portion_filter == 'family' %}active{% endif %}">
+                        👨‍👩‍👧 Family (4 orang)
+                    </a>
+                    <a href="?portion=party{% if selected_category %}&category={{ selected_category }}{% endif %}"
+                       class="sidebar-nav-link {% if portion_filter == 'party' %}active{% endif %}">
+                        🎉 Party (8+ orang)
+                    </a>
+                </div>
+
+                <!-- Help Card -->
+                <div class="card p-3 bg-primary-custom text-white">
+                    <div class="fw-700 mb-1">🤔 Bingung pilih menu?</div>
+                    <p class="small opacity-85 mb-3">
+                        Chat kami di WhatsApp, kami siap bantu rekomendasikan!
+                    </p>
+                    <a href="https://wa.me/62895331091739" target="_blank"
+                       class="btn btn-wa btn-sm w-100">
+                        <i class="fab fa-whatsapp me-1"></i>Chat WA
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ── MAIN CONTENT ── -->
+        <div class="col-lg-9 col-md-8">
+
+            <!-- Search Bar -->
+            <form method="get" class="mb-4">
+                {% if selected_category %}
+                <input type="hidden" name="category" value="{{ selected_category }}">
+                {% endif %}
+                {% if portion_filter %}
+                <input type="hidden" name="portion" value="{{ portion_filter }}">
+                {% endif %}
+                <div class="input-group shadow-sm" style="border-radius:50px;overflow:hidden;">
+                    <input type="text" name="q"
+                           class="form-control border-0 py-3 ps-4"
+                           placeholder="Cari menu favorit..."
+                           value="{{ search_query }}"
+                           style="background:#fff;border-radius:50px 0 0 50px;">
+                    <button class="btn btn-primary px-4" type="submit"
+                            style="border-radius:0 50px 50px 0;">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </form>
+
+            <!-- Filter Chips -->
+            <div class="d-flex flex-wrap gap-2 mb-4">
+                <a href="{% url 'menu' %}"
+                   class="filter-chip {% if not selected_category and not portion_filter %}active{% endif %}">
+                    Semua
+                </a>
+                {% for cat in categories %}
+                <a href="?category={{ cat.slug }}"
+                   class="filter-chip {% if selected_category == cat.slug %}active{% endif %}">
+                    {{ cat.icon }} {{ cat.name }}
+                </a>
+                {% endfor %}
+            </div>
+
+            <!-- Results Info -->
+            <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+                <p class="text-faint small mb-0">
+                    Menampilkan
+                    <strong style="color:var(--primary);">{{ products.count }}</strong> menu
+                    {% if search_query %}untuk "<em>{{ search_query }}</em>"{% endif %}
+                </p>
+                {% if search_query or selected_category or portion_filter %}
+                <a href="{% url 'menu' %}" class="btn btn-sm btn-outline-secondary"
+                   style="border-radius:50px;font-size:.78rem;">
+                    <i class="fas fa-times me-1"></i>Reset Filter
+                </a>
+                {% endif %}
+            </div>
+
+            <!-- Tombol Tambah Produk (staff only) -->
+            {% if user.is_staff %}
+            <div class="d-flex justify-content-end mb-3">
+                <a href="/admin/core/product/add/" class="btn btn-primary btn-sm px-4">
+                    <i class="fas fa-plus me-2"></i>Tambah Produk
+                </a>
+            </div>
+            {% endif %}
+
+            <!-- ── PRODUCT GRID ── -->
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-3 g-4 mb-5">
+
+                {% for product in products %}
+                <div class="col">
+                    <div class="card h-100 position-relative">
+
+                        <!-- Badge Featured -->
+                        {% if product.is_featured %}
+                        <span class="position-absolute top-0 end-0 m-2 badge bg-primary rounded-pill"
+                              style="z-index:2;">
+                            ⭐ Featured
+                        </span>
+                        {% endif %}
+
+                        <!-- Carousel Gambar -->
+                        <div class="card-img-wrap">
+                            <div id="carousel{{ product.id }}"
+                                 class="carousel slide"
+                                 data-bs-ride="carousel"
+                                 style="height: 100%;">
+
+                                <div class="carousel-inner" style="height: 100%;">
+
+                                    <!-- Gambar Utama -->
+                                    {% if product.image %}
+                                    <div class="carousel-item active" style="height: 100%;">
+                                        <img src="{{ product.image.url }}"
+                                             class="card-img-top product-img"
+                                             alt="{{ product.name }}">
+                                    </div>
+                                    {% endif %}
+
+                                    <!-- Gambar Tambahan -->
+                                    {% for img in product.images.all %}
+                                    <div class="carousel-item
+                                        {% if not product.image and forloop.first %}active{% endif %}" style="height: 100%;">
+                                        <img src="{{ img.image.url }}"
+                                             class="card-img-top product-img"
+                                             alt="{{ product.name }}">
+                                    </div>
+                                    {% endfor %}
+
+                                    <!-- Placeholder jika tidak ada gambar sama sekali -->
+                                    {% if not product.image and not product.images.all %}
+                                    <div class="carousel-item active" style="height: 100%;">
+                                        <div style="height:100%;background:var(--cream-dark);
+                                                    display:flex;align-items:center;
+                                                    justify-content:center;font-size:3.5rem;
+                                                    border-radius:24px 24px 0 0;">
+                                            🍽️
+                                        </div>
+                                    </div>
+                                    {% endif %}
+
+                                </div>
+
+                                <!-- Kontrol Carousel -->
+                                <button class="carousel-control-prev" type="button"
+                                        data-bs-target="#carousel{{ product.id }}"
+                                        data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon"></span>
+                                </button>
+                                <button class="carousel-control-next" type="button"
+                                        data-bs-target="#carousel{{ product.id }}"
+                                        data-bs-slide="next">
+                                    <span class="carousel-control-next-icon"></span>
+                                </button>
+
+                            </div>
+                        </div>
+                        <!-- end carousel -->
+
+                        <!-- Card Body -->
+                        <div class="card-body d-flex flex-column">
+                            <div class="badge-warm d-inline-block mb-1" style="width:fit-content;">
+                                {{ product.get_portion_display }}
+                                {% if product.category %} · {{ product.category.name }}{% endif %}
+                            </div>
+
+                            <h5 class="font-playfair fw-700 mb-1" style="font-size:1rem;">
+                                {{ product.name }}
+                            </h5>
+
+                            <p class="text-faint small lh-lg flex-grow-1 mb-3">
+                                {{ product.description|truncatechars:85 }}
+                            </p>
+
+                            <div class="d-flex align-items-center justify-content-between mt-auto">
+                                <div class="product-price">
+                                    Rp {{ product.price|floatformat:0 }}
+                                    <span class="text-faint fw-400" style="font-size:.7rem;">/porsi</span>
+                                </div>
+                                <button type="button" 
+                                        onclick="openOrderModal('product', '{{ product.id }}', '{{ product.name|escapejs }}', '{{ product.price }}', '{% if product.image %}{{ product.image.url }}{% endif %}', '{{ product.get_portion_display }}')"
+                                        class="btn btn-primary btn-sm px-3">
+                                    Pesan <i class="fas fa-arrow-right ms-1"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Tombol Edit/Hapus (staff only) -->
+                        {% if user.is_staff %}
+                        <div class="p-3 pt-0 d-flex gap-2">
+                            <a href="/admin/core/product/{{ product.id }}/change/"
+                               class="btn btn-warning btn-sm w-50">
+                                <i class="fas fa-edit me-1"></i>Edit
+                            </a>
+                            <a href="/admin/core/product/{{ product.id }}/delete/"
+                               class="btn btn-danger btn-sm w-50">
+                                <i class="fas fa-trash me-1"></i>Hapus
+                            </a>
+                        </div>
+                        {% endif %}
+
+                    </div>
+                </div>
+
+                {% empty %}
+                <div class="col-12 text-center py-5">
+                    <div style="font-size:4rem;" class="mb-3">🔍</div>
+                    <h5 class="font-playfair fw-700 mb-2">Menu tidak ditemukan</h5>
+                    <p class="text-faint mb-3">Coba kata kunci lain atau lihat semua menu</p>
+                    <a href="{% url 'menu' %}" class="btn btn-primary px-4">
+                        Lihat Semua Menu
+                    </a>
+                </div>
+                {% endfor %}
+
+            </div>
+            <!-- end product grid -->
+
+            <!-- ── BUNDLE PACKAGES ── -->
+            {% if bundles %}
+            <div class="mb-5">
+                <div class="section-label mb-2">📦 Paket Hemat</div>
+                <h4 class="font-playfair fw-700 mb-1" style="color:var(--text-dark);">Bundling Menu</h4>
+                <p class="text-faint small mb-3">Kombinasi menu terbaik, harga lebih hemat!</p>
+
+                <div class="d-flex flex-column gap-3">
+                    {% for bundle in bundles %}
+                    <div class="bundle-item p-3 p-md-4">
+                        <div class="d-flex align-items-center justify-content-between gap-3 flex-wrap">
+                            <div>
+                                <h6 class="font-playfair fw-700 mb-1">📦 {{ bundle.name }}</h6>
+                                <p class="text-faint small mb-0">{{ bundle.description }}</p>
+                            </div>
+                            <div class="d-flex align-items-center gap-3 flex-shrink-0">
+                                <span class="product-price">
+                                    Rp {{ bundle.bundle_price|floatformat:0 }}
+                                </span>
+                                <button type="button"
+                                        onclick="openOrderModal('bundle', '{{ bundle.id }}', '{{ bundle.name|escapejs }}', '{{ bundle.bundle_price }}', '', 'Paket Hemat')"
+                                        class="btn btn-primary btn-sm px-3">
+                                    Pesan <i class="fas fa-arrow-right ms-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- ── ADD-ONS ── -->
+            {% if addons %}
+            <div class="mb-4">
+                <div class="section-label mb-2">➕ Add-On</div>
+                <h4 class="font-playfair fw-700 mb-1" style="color:var(--text-dark);">Tambahan Pilihan</h4>
+                <p class="text-faint small mb-3">*Add-on dapat dipilih saat checkout</p>
+                <div class="row row-cols-3 row-cols-sm-4 row-cols-md-6 g-2">
+                    {% for addon in addons %}
+                    <div class="col">
+                        <div class="addon-mini">
+                            <div style="font-size:1.6rem;" class="mb-1">{{ addon.icon }}</div>
+                            <div class="fw-700" style="font-size:.75rem;">{{ addon.name }}</div>
+                            <div class="text-primary-custom fw-700" style="font-size:.72rem;">
+                                +Rp {{ addon.price|floatformat:0 }}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+        </div>
+        <!-- end main content col -->
+
+    </div>
+</div>
+
+<!-- Interactive Order Customization Modal -->
+<div class="modal fade" id="customiseOrderModal" tabindex="-1" aria-labelledby="customiseOrderModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-warm-lg" style="border-radius: 24px; background: var(--cream);">
+            <div class="modal-header border-0 pb-0" style="padding: 24px 24px 10px;">
+                <h5 class="modal-title font-playfair fw-700" id="customiseOrderModalLabel" style="color: var(--text-dark);">
+                    Sesuaikan Pesanan
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style="padding: 10px 24px 24px;">
+                <!-- Product / Bundle Info -->
+                <div class="d-flex align-items-center gap-3 p-3 bg-white mb-3 shadow-sm" style="border-radius: 16px; border: 1px solid var(--cream-dark);">
+                    <img id="modalItemImg" src="" alt="" class="menu-thumb" style="width:70px; height:70px; border-radius:12px; object-fit:cover; display:none;">
+                    <div id="modalItemImgPlaceholder" class="menu-thumb-placeholder" style="width:70px; height:70px; border-radius:12px; background:var(--cream-dark); display:flex; align-items:center; justify-content:center; font-size:2.2rem;">🍽️</div>
+                    <div>
+                        <h6 id="modalItemName" class="font-playfair fw-700 mb-1 text-dark" style="font-size: 1.1rem;">Nama Menu</h6>
+                        <span id="modalItemPortion" class="badge-warm">Portion Description</span>
+                    </div>
+                </div>
+
+                <!-- Quantity Selector -->
+                <div class="mb-4 bg-white p-3 shadow-sm" style="border-radius: 16px; border: 1px solid var(--cream-dark);">
+                    <label class="form-label d-block fw-700 mb-2" style="font-size: 0.9rem; color: var(--text-mid);">Jumlah Porsi</label>
+                    <div class="d-flex align-items-center gap-3">
+                        <button type="button" class="btn btn-outline-primary rounded-circle p-0 d-flex align-items-center justify-content-center" style="width:36px; height:36px; font-size:1.2rem; line-height:1; font-weight:700;" onclick="changeModalQty(-1)">-</button>
+                        <span id="modalQtyDisplay" class="fw-800 fs-5" style="color:var(--text-dark); min-width: 20px; text-align: center;">1</span>
+                        <button type="button" class="btn btn-outline-primary rounded-circle p-0 d-flex align-items-center justify-content-center" style="width:36px; height:36px; font-size:1.2rem; line-height:1; font-weight:700;" onclick="changeModalQty(1)">+</button>
+                    </div>
+                </div>
+
+                <!-- Add-Ons list -->
+                <div class="mb-4 bg-white p-3 shadow-sm" style="border-radius: 16px; border: 1px solid var(--cream-dark);">
+                    <label class="form-label d-block fw-700 mb-2" style="font-size: 0.9rem; color: var(--text-mid);">Tambahan Add-On (Opsional)</label>
+                    <div style="max-height: 200px; overflow-y: auto; padding-right: 5px;">
+                        {% for addon in addons %}
+                        <div class="addon-box" onclick="toggleModalAddonCard(this)">
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="fs-4">{{ addon.icon }}</span>
+                                <div>
+                                    <strong class="small" style="color: var(--text-dark);">{{ addon.name }}</strong><br>
+                                    <small class="text-faint" style="font-size: 0.7rem;">{{ addon.description }}</small>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center gap-2" onclick="event.stopPropagation();">
+                                <span class="small fw-700" style="color: var(--primary);">+Rp {{ addon.price|floatformat:0 }}</span>
+                                <input type="checkbox" class="modal-addon-checkbox form-check-input" data-price="{{ addon.price }}" value="{{ addon.id }}" onchange="updateModalTotal()">
+                            </div>
+                        </div>
+                        {% empty %}
+                        <p class="text-center text-muted small py-3">Tidak ada add-on yang tersedia.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Total Harga -->
+                <div class="p-3 bg-white mb-4 d-flex justify-content-between align-items-center shadow-sm" style="border-radius: 16px; border: 1px solid var(--cream-dark);">
+                    <span class="fw-700" style="color: var(--text-mid); font-size: 0.95rem;">Total Harga</span>
+                    <strong id="modalTotalDisplay" class="fs-4 text-primary-custom">Rp 0</strong>
+                </div>
+
+                <!-- CTA Button -->
+                <button type="button" class="btn btn-primary w-100 py-3 shadow-warm" onclick="proceedToCheckout()">
+                    Pesan Sekarang <i class="fas fa-arrow-right ms-2"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Assign background image dari data-bg
+    const heroBg = document.getElementById('menuHeroBg');
+    if (heroBg) {
+        heroBg.style.backgroundImage = "url('" + heroBg.dataset.bg + "')";
+    }
+
+    // Modal Interaction State
+    let currentItemType = '';
+    let currentItemId = '';
+    let currentItemBasePrice = 0;
+    let currentItemQty = 1;
+    let orderModalObj = null;
+
+    function openOrderModal(type, id, name, price, imageUrl, portionDescription) {
+        currentItemType = type;
+        currentItemId = id;
+        currentItemBasePrice = parseInt(price);
+        currentItemQty = 1;
+
+        // Reset inputs in modal
+        document.getElementById('modalItemName').innerText = name;
+        document.getElementById('modalItemPortion').innerText = portionDescription;
+        document.getElementById('modalQtyDisplay').innerText = currentItemQty;
+
+        const imgEl = document.getElementById('modalItemImg');
+        const placeholderEl = document.getElementById('modalItemImgPlaceholder');
+
+        if (imageUrl) {
+            imgEl.src = imageUrl;
+            imgEl.style.display = 'block';
+            placeholderEl.style.display = 'none';
+        } else {
+            imgEl.style.display = 'none';
+            placeholderEl.style.display = 'flex';
+            if (type === 'bundle') {
+                placeholderEl.innerText = '📦';
+            } else {
+                placeholderEl.innerText = '🍽️';
+            }
+        }
+
+        // Uncheck all addon checkboxes
+        document.querySelectorAll('.modal-addon-checkbox').forEach(cb => {
+            cb.checked = false;
+            const box = cb.closest('.addon-box');
+            if (box) box.classList.remove('selected');
+        });
+
+        updateModalTotal();
+
+        // Open Bootstrap Modal
+        if (!orderModalObj) {
+            orderModalObj = new bootstrap.Modal(document.getElementById('customiseOrderModal'));
+        }
+        orderModalObj.show();
+    }
+
+    function changeModalQty(delta) {
+        if (currentItemQty + delta >= 1 && currentItemQty + delta <= 20) {
+            currentItemQty += delta;
+            document.getElementById('modalQtyDisplay').innerText = currentItemQty;
+            updateModalTotal();
+        }
+    }
+
+    function toggleModalAddonCard(cardElement) {
+        const checkbox = cardElement.querySelector('.modal-addon-checkbox');
+        checkbox.checked = !checkbox.checked;
+        toggleModalAddonState(checkbox);
+    }
+
+    function toggleModalAddonState(checkbox) {
+        const card = checkbox.closest('.addon-box');
+        if (card) {
+            if (checkbox.checked) {
+                card.classList.add('selected');
+            } else {
+                card.classList.remove('selected');
+            }
+        }
+        updateModalTotal();
+    }
+
+    function updateModalTotal() {
+        let subtotal = currentItemBasePrice * currentItemQty;
+        let addonTotal = 0;
+        document.querySelectorAll('.modal-addon-checkbox:checked').forEach(cb => {
+            addonTotal += parseInt(cb.dataset.price || 0);
+        });
+        let total = subtotal + addonTotal;
+        document.getElementById('modalTotalDisplay').innerText = 'Rp ' + total.toLocaleString('id-ID');
+    }
+
+    function proceedToCheckout() {
+        // Collect checked addon IDs
+        let addonIds = [];
+        document.querySelectorAll('.modal-addon-checkbox:checked').forEach(cb => {
+            addonIds.push(cb.value);
+        });
+
+        // Build URL
+        let url = "{% url 'checkout' %}?";
+        if (currentItemType === 'product') {
+            url += 'product=' + currentItemId;
+        } else if (currentItemType === 'bundle') {
+            url += 'bundle=' + currentItemId;
+        }
+        url += '&quantity=' + currentItemQty;
+        if (addonIds.length > 0) {
+            url += '&addons=' + addonIds.join(',');
+        }
+
+        // Redirect to checkout
+        window.location.href = url;
+    }
+</script>
+{% endblock %}
